@@ -1,65 +1,31 @@
-import sys
-import numpy as np
-import math
-import random
-
 import gym
-import gym_game
+from Game.chess import Game
+from ReiforcementLearning.RLplayer import RLPlayer
+#from StockFish.StockFishplayer import 
 
-MAX_EPISODES = 10
-
-def simulate():
-    global epsilon, epsilon_decay
-    for episode in range(MAX_EPISODES):
-
-        # Init environment
-        state = env.reset()
-        total_reward = 0
-
-        # AI tries up to MAX_TRY times
-        for t in range(MAX_TRY):
-
-            # In the beginning, do random action to learn
-            if random.uniform(0, 1) < epsilon:
-                action = env.action_space.sample()
-            else:
-                action = np.argmax(q_table[state])
-
-            # Do action and get result
-            next_state, reward, done, _ = env.step(action)
-            total_reward += reward
-
-            # Get correspond q value from state, action pair
-            q_value = q_table[state][action]
-            best_q = np.max(q_table[next_state])
-
-            # Q(state, action) <- (1 - a)Q(state, action) + a(reward + rmaxQ(next state, all actions))
-            q_table[state][action] = (1 - learning_rate) * q_value + learning_rate * (reward + gamma * best_q)
-
-            # Set up for the next iteration
-            state = next_state
-
-            # Draw games
-            env.render()
-
-            # When episode is done, print reward
-            if done or t >= MAX_TRY - 1:
-                print("Episode %d finished after %i time steps with total reward = %f." % (episode, t, total_reward))
-                break
-
-        # exploring rate decay
-        if epsilon >= 0.005:
-            epsilon *= epsilon_decay
+learning_rate = 0.01
+n_episodes = 100_000
+start_epsilon = 1.0
+epsilon_decay = start_epsilon / (n_episodes / 2)  # reduce the exploration over time
+final_epsilon = 0.1
 
 
-if __name__ == "__main__":
-    env = gym.make("Pygame-v0")
-    MAX_EPISODES = 9999
-    MAX_TRY = 1000
-    epsilon = 1
-    epsilon_decay = 0.999
-    learning_rate = 0.1
-    gamma = 0.6
-    num_box = tuple((env.observation_space.high + np.ones(env.observation_space.shape)).astype(int))
-    q_table = np.zeros(num_box + (env.action_space.n,))
-    simulate()
+env = gym.make('kungFuChess-v0')
+player1 = RLPlayer()
+for episode in range(n_episodes):
+    obs, info = env.reset()
+    done = False
+
+    # play one episode
+    while not done:
+        action = agent.get_action(obs)
+        next_obs, reward, terminated, truncated, info = env.step(action)
+
+        # update the agent
+        agent.update(obs, action, reward, terminated, next_obs)
+
+        # update if the environment is done and the current obs
+        done = terminated or truncated
+        obs = next_obs
+
+    agent.decay_epsilon()

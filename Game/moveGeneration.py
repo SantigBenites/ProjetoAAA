@@ -1,7 +1,7 @@
 import math
-from pieces import pieces_table
+from Game.pieces import pieces_table
 from functools import cache
-from cli_display import print_board
+from Game.cli_display import print_board
 
 direction_offsets = [8, -8, 1, -1, 7, -7, 9, -9]
 square_to_edge = {}

@@ -1,13 +1,11 @@
-import threading, gym, random
+import threading, gym, random, time
 
 from Game.pieces import pieces_table
 from Game.moveGeneration import possible_moves
 from Game.chessboard import Chessboard
 from Game.cli_display import board_string
 
-import time
-
-class RLPlayer(gym.Env):
+class RLPlayer(threading.Thread):
 
     def __init__(self, c_board: Chessboard, color: int, stop: threading.Event) -> None:
         threading.Thread.__init__(self, daemon=True) 
@@ -16,47 +14,32 @@ class RLPlayer(gym.Env):
         self.color = color
         
     def run(self) -> None:
+        # we will need to implement the algorithm here
         while not self.stop.is_set():
             #self.random_move()
             mv = self.choose_next_move()
             time.sleep(0.1)
-            self.move(mv[0], mv[1])
+            self.step(mv)
 
     def step(self, action: tuple[int,int]) -> tuple[Chessboard, float, bool, None]:
         # Takes input from player and updates the game
         
         current_index, final_index = action
-        
-        self.cb.board[final_index] = self.cb.board[current_index]
-        self.cb.board[current_index] = 0
-        
-        self.cb.timestamps[final_index] = int(time.time())
-
+        self.move(current_index, final_index)
 
         reward = self._reward()
         observation = self._observation()
         done = self.game.win_condition
 
         return observation, reward, done, None
-
-
-    def reset(self) -> Chessboard:
-
-        return self._observation()
-
-    def render(self, mode: str = 'unicode') -> str:
-        # Shows Chess Board using cli_display
+    
+    def move(self, current_index: int, final_index: int):
+        self.cb.board[final_index] = self.cb.board[current_index]
+        self.cb.board[current_index] = 0
         
-        return board_string(self.cb.board, 8)
+        self.cb.timestamps[final_index] = int(time.time())
 
 
-    def close(self):
-        # Closes enviroment
-
-
-        return
-
-    @property
     def legal_moves(self) -> list[(int,int)]:
         """Legal moves for the current player."""
 
