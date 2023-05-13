@@ -14,7 +14,7 @@ TIME_OUT = 5
 
 class Game:
 
-    def __init__(self, board: list[int] = None, cooldown: int = 0):
+    def __init__(self, environment, board: list[int] = None, cooldown: int = 0):
         
         if board is None: # * default board
             board = [3+8,5+8,4+8,2+8,1+8,4+8,5+8,3+8,
@@ -34,11 +34,13 @@ class Game:
 
         # Original board
         self.originalBoard = Chessboard(board,[int(time.time()) - cooldown - 1] * 64,cooldown)
+        # Environment
+        self.env = environment
 
         # Events for threads
         self.stop_e = td.Event()
         # Playing as RL
-        self.player_1 = RLPlayer(self.cb, 1, self.stop_e)
+        self.player_1 = RLPlayer(self.cb, 1, self.stop_e, self.env)
         # Playing as StockFish
         self.player_2 = StockFishPlayer(self.cb, 2, self.stop_e)
     

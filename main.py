@@ -1,7 +1,7 @@
 import gym
 from Game.chess import Game
 from ReiforcementLearning.RLplayer import RLPlayer
-#from StockFish.StockFishplayer import 
+from StockFish.StockFishplayer import StockFishPlayer
 
 learning_rate = 0.01
 n_episodes = 100_000

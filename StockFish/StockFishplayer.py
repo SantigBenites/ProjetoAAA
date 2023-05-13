@@ -60,51 +60,74 @@ class StockFishPlayer(threading.Thread):
 
         return (row1 + col1 * 8, row2 + col2 * 8)
 
+    def getPiece(int):
+
+        match int:
+            case 9 : #1+8 
+                return "k"
+            case 10: #2+8 
+                return "q"
+            case 11: #3+8 
+                return "r"
+            case 12: #4+8 
+                return "b"
+            case 13: #5+8
+                return "n"
+            case 14: #6+8
+                return "p"
+            case 17: #1+16 
+                return "K"
+            case 18: #2+16
+                return "Q"
+            case 19: #3+16
+                return "R"
+            case 20: #4+16
+                return "B"
+            case 21: #5+16
+                return "N"
+            case 22: #6+16
+                return "P"
+            case 0:
+                return 0
+            
     def boardToFen(self):
-        rows,cols = 8,8
         string = ""
+        empty = 0
+        for index,square in enumerate(self.cb.board):
+            
+            piece = self.getPiece(square)
 
-        for row in range(rows):
+            if piece == 0:
+                empty += 1
+            else:
+                if empty:
+                    string += str(empty)
+                    empty = 0
+                string += piece
 
-            emptySpace = 0
+            if index % 8 == 7:
+                if empty:
+                    string += str(empty)
+                    empty = 0
 
-            for col in range(cols):
+                if index != 63:
+                    string += "/"
 
-                currentVal = self.cb.board[row*8 + col]
-                    
-                if emptySpace != 0 and currentVal != 0:
-                    string += str(emptySpace)
+        # String is board
+        string +=  "KQkq - 0 1"
 
-                match currentVal:
-                    case 9 : #1+8 
-                        string += "k"
-                    case 10: #2+8 
-                        string += "q"
-                    case 11: #3+8 
-                        string += "r"
-                    case 12: #4+8 
-                        string += "b"
-                    case 13: #5+8
-                        string += "n"
-                    case 14: #6+8
-                        string += "p"
-                    case 17: #1+16 
-                        string += "K"
-                    case 18: #2+16
-                        string += "Q"
-                    case 19: #3+16
-                        string += "R"
-                    case 20: #4+16
-                        string += "B"
-                    case 21: #5+16
-                        string += "N"
-                    case 22: #6+16
-                        string += "P"
-                    case 0:
-                        emptySpace+=1
+        # Add color
+        string += " w " if self.color == 1 else " b "
 
-            if emptySpace != 0:
-                string += str(emptySpace)
-            string += "/"
+        # Add castling (irrelevant)
+        string += " KQkq "
 
-        return string[:-1]
+        # Add en passant
+        string += " - "
+
+        # Add Halfmove Clock
+        string += " 0 "
+
+        # Add Full moves (TODO, i think this is necessary)
+        string += " 1 "
+        return string
