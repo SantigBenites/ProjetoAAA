@@ -14,28 +14,10 @@ TIME_OUT = 5
 
 class Game:
 
-    def __init__(self, environment, board: list[int] = None, cooldown: int = 0):
-        
-        if board is None: # * default board
-            board = [3+8,5+8,4+8,2+8,1+8,4+8,5+8,3+8,
-                     0,0,0,0,0,0,0,0,
-                     0,0,0,0,0,0,0,0,
-                     0,0,0,0,0,0,0,0,
-                     0,0,0,0,0,0,0,0,
-                     0,0,0,0,0,0,0,0,
-                     0,0,0,0,0,0,0,0,
-                     3+16,5+16,4+16,2+16,1+16,4+16,5+16,3+16
-                    ]
-        self.cb = Chessboard(
-            board,                                  # set board
-            [int(time.time()) - cooldown - 1] * 64, # set current timestamps
-            cooldown                                # set cooldown
-        )
-
-        # Original board
+    def __init__(self, board: list[int] = None, cooldown: int = 0):
+    
+        # Board / environment
         self.originalBoard = Chessboard(board,[int(time.time()) - cooldown - 1] * 64,cooldown)
-        # Environment
-        self.env = environment
 
         # Events for threads
         self.stop_e = td.Event()

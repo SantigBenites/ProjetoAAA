@@ -21,25 +21,7 @@ class StockFishPlayer(threading.Thread):
         while not self.stop.is_set():
             mv = self.choose_net_move()
             time.sleep(0.1)
-            self.move(mv[0], mv[1])
-
-    def step(self, action: tuple[int,int]) -> None:
-
-        current_index, final_index = action
-        self.move(current_index, final_index)
-
-        reward = self._reward()
-        observation = self._observation()
-        done = self.game.win_condition
-
-        return observation, reward, done, None
-    
-
-    def move(self, current_index: int, final_index: int):
-        self.cb.board[final_index] = self.cb.board[current_index]
-        self.cb.board[current_index] = 0
-        
-        self.cb.timestamps[final_index] = int(time.time())
+            self.cb.step(mv)
 
     def choose_net_move(self):
 

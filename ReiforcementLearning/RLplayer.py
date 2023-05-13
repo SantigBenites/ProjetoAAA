@@ -1,7 +1,6 @@
 import threading, gym, random, time
 
 from Game.pieces import pieces_table
-from Game.moveGeneration import possible_moves
 from Game.chessboard import Chessboard
 from Game.cli_display import board_string
 
@@ -19,45 +18,7 @@ class RLPlayer(threading.Thread):
             #self.random_move()
             mv = self.choose_next_move()
             time.sleep(0.1)
-            self.step(mv)
-
-    def step(self, action: tuple[int,int]) -> tuple[Chessboard, float, bool, None]:
-        # Takes input from player and updates the game
-        
-        current_index, final_index = action
-        self.move(current_index, final_index)
-
-        reward = self._reward()
-        observation = self._observation()
-        done = self.game.win_condition
-
-        return observation, reward, done, None
-    
-    def move(self, current_index: int, final_index: int):
-        self.cb.board[final_index] = self.cb.board[current_index]
-        self.cb.board[current_index] = 0
-        
-        self.cb.timestamps[final_index] = int(time.time())
-
-
-    def legal_moves(self) -> list[(int,int)]:
-        """Legal moves for the current player."""
-
-        legal_moves:list(tuple[int,int]) = []
-        my_pieces = list(filter(lambda index: (self.cb.board[index] >> 3 == self.color), range(0, 64)))
-        for piece in my_pieces:
-            legal_moves.append(self.valid_moves(piece))
-            
-        return legal_moves
-    
-    def valid_moves(self, index: int) -> list[int]:
-        
-        current_time = int(time.time())
-        
-        if current_time - self.cb.timestamps[index] >= self.cb.cooldown:
-            pm = possible_moves(self.cb.board, index)
-            return zip([index]*len(pm),pm)
-        return []
+            self.cb.step(mv)
 
 
     def _observation(self) -> Chessboard:

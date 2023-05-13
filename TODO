@@ -1,4 +1,5 @@
-☐ Implement StockFish Player
+✔ Implement StockFish Player @done(23-05-13 17:52)
 ☐ Implement RLPlayer RL algorythm
 ☐ Implement main to train the RL
 ☐ Update Genetic algorythm to new standarts
+☐ Move enviroment logic to chessboard
