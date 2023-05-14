@@ -18,7 +18,7 @@ class RLPlayer(threading.Thread):
             mv = self.random_move()
             #mv = self.choose_next_move()
             if mv != None:
-                time.sleep(3)
+                #time.sleep(0.1)
                 self.cb.step(mv,self.color)
 
 

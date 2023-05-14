@@ -14,20 +14,21 @@ TIME_OUT = 15
 
 class Game:
 
-    def __init__(self, board: list[int] = None, cooldown: int = 0):
+    def __init__(self, player1, player2 , board: Chessboard, stop :td.Event):
     
         # Board / environment
-        self.originalBoard = Chessboard(board,cooldown * 64,cooldown)
+        self.originalBoard = deepcopy( board)
 
         # Board
-        self.cb = Chessboard(board,cooldown * 64,cooldown)
+        self.cb = board
     
         # Events for threads
-        self.stop_e = td.Event()
+        self.stop_e = stop
+
         # Playing as RL
-        self.player_1 = RLPlayer(self.cb, 1, self.stop_e)
+        self.player_1 = player1
         # Playing as StockFish
-        self.player_2 = StockFishPlayer(self.cb, 2, self.stop_e)
+        self.player_2 = player2
     
     def play(self,verbatim :bool = False ) -> list[tuple[dict[str, int], int]]:
         
