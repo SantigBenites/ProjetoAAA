@@ -5,6 +5,7 @@ from Game.moveGeneration import possible_moves
 from Game.chessboard import Chessboard
 from Game.cli_display import board_string
 import chess.engine
+from Game.cli_display import print_board
 
 engine = chess.engine.SimpleEngine.popen_uci("/home/santig/Programs/StockFish/stockfish-ubuntu-20.04-x86-64")
 timeScale = 2.0
@@ -18,21 +19,28 @@ class StockFishPlayer(threading.Thread):
         self.color = color
 
     def run(self) -> None:
+        last_move = None
         while not self.stop.is_set():
             mv = self.choose_next_move()
-            time.sleep(0.1)
-            self.cb.step(mv)
+            time.sleep(0.2)
+            last_move = mv
+            if mv == None:
+                observation = self.cb.destroyEnemyKing(self.color)
+                return
+            else:
+                observation = self.cb.step(mv,self.color)
+            self.board = observation
 
     def choose_next_move(self):
-
+        # TODO Add king capture to stockFish
         # board - player - castle - enPasssant - halfMove - fullmove
         board = chess.Board(fen = self.boardToFen())
-        print(board)
-
-        result = engine.play(board, chess.engine.Limit(timeScale))
+        try:
+            result = engine.play(board, chess.engine.Limit(timeScale))
+        except chess.engine.EngineTerminatedError:
+            return None
+        
         best_move = result.move
-
-        print(str(best_move))
 
         return self.standardMoveToLocation(str(best_move))
     
@@ -43,10 +51,10 @@ class StockFishPlayer(threading.Thread):
 
         row1, col1, row2, col2 = move[0], int(move[1]), move[2], int(move[3])
 
-        row1 = string.ascii_lowercase.index(row1)
-        row2 = string.ascii_lowercase.index(row2)
+        row1 = string.ascii_lowercase.index(row1)+1
+        row2 = string.ascii_lowercase.index(row2)+1
 
-        return (col1 + row1 * 8, col2 + row2 * 8)
+        return ((col1-1)*8 + row1-1, (col2-1)*8 + row2-1)
 
     def getPiece(self,value):
         

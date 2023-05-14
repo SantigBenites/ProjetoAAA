@@ -6,7 +6,7 @@ from Game.cli_display import board_string
 
 class RLPlayer(threading.Thread):
 
-    def __init__(self, c_board: Chessboard, color: int, stop: threading.Event, env) -> None:
+    def __init__(self, c_board: Chessboard, color: int, stop: threading.Event) -> None:
         threading.Thread.__init__(self, daemon=True) 
         self.cb = c_board
         self.stop = stop
@@ -15,10 +15,11 @@ class RLPlayer(threading.Thread):
     def run(self) -> None:
         # we will need to implement the algorithm here
         while not self.stop.is_set():
-            #self.random_move()
-            mv = self.choose_next_move()
-            time.sleep(0.1)
-            self.cb.step(mv)
+            mv = self.random_move()
+            #mv = self.choose_next_move()
+            if mv != None:
+                time.sleep(3)
+                self.cb.step(mv,self.color)
 
 
     def _observation(self) -> Chessboard:
@@ -30,3 +31,10 @@ class RLPlayer(threading.Thread):
         """Returns the reward for the most recent move."""
 
         return self.game.win_condition()
+
+    def random_move(self):
+        moves = self.cb.legal_moves(self.color)
+        if moves:
+            return random.choice(moves)
+        else:
+            return None

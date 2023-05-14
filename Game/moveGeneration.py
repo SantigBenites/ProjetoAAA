@@ -61,7 +61,7 @@ def possible_moves(board, piece_index: int) -> list[int]:
 
 
 
-def sliding_moves(board , piece_index ,piece_type, color):
+def sliding_moves(board, piece_index, piece_type, color):
 
     valid_directions = direction_offsets.copy()
     square_to_edge_valid = square_to_edge[piece_index]

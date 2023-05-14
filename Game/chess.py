@@ -10,7 +10,7 @@ from Game.chessboard import Chessboard
 from Game.cli_display import print_board, board_string
 from copy import deepcopy
 
-TIME_OUT = 5
+TIME_OUT = 15
 
 class Game:
 
@@ -25,7 +25,7 @@ class Game:
         # Events for threads
         self.stop_e = td.Event()
         # Playing as RL
-        self.player_1 = StockFishPlayer(self.cb, 1, self.stop_e)
+        self.player_1 = RLPlayer(self.cb, 1, self.stop_e)
         # Playing as StockFish
         self.player_2 = StockFishPlayer(self.cb, 2, self.stop_e)
     
@@ -37,12 +37,16 @@ class Game:
         self.player_1.start()
         self.player_2.start()
         
-        while ((1+8 in self.cb.board) and (1+16 in self.cb.board)) and (start_time + TIME_OUT > curr_time):
+        while ((1+8 in self.cb.board) and (1+16 in self.cb.board)): #and (start_time + TIME_OUT > curr_time):
             curr_time = int(time.time())
             if verbatim: print_board(self.cb.board, 8)
             time.sleep(0.1)
 
         self.stop_e.set()
+
+        print("Ended")
+        time.sleep(5)
+        print_board(self.cb.board, 8)
         
         self.player_1.join()
         self.player_2.join()
