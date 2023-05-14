@@ -19,32 +19,38 @@ class StockFishPlayer(threading.Thread):
 
     def run(self) -> None:
         while not self.stop.is_set():
-            mv = self.choose_net_move()
+            mv = self.choose_next_move()
             time.sleep(0.1)
             self.cb.step(mv)
 
-    def choose_net_move(self):
+    def choose_next_move(self):
 
         # board - player - castle - enPasssant - halfMove - fullmove
         board = chess.Board(fen = self.boardToFen())
+        print(board)
 
         result = engine.play(board, chess.engine.Limit(timeScale))
         best_move = result.move
 
-        return self.standardMoveToLocation(best_move)
+        print(str(best_move))
+
+        return self.standardMoveToLocation(str(best_move))
     
     def standardMoveToLocation(self, move):
 
-        row1, col1, row2, col2 = move[0], move[1], move[3], move[4]
+        if move == None:
+            return None
 
-        col1 = string.lowercase.index(col1)
-        col2 = string.lowercase.index(col2)
+        row1, col1, row2, col2 = move[0], int(move[1]), move[2], int(move[3])
 
-        return (row1 + col1 * 8, row2 + col2 * 8)
+        row1 = string.ascii_lowercase.index(row1)
+        row2 = string.ascii_lowercase.index(row2)
 
-    def getPiece(int):
+        return (col1 + row1 * 8, col2 + row2 * 8)
 
-        match int:
+    def getPiece(self,value):
+        
+        match value:
             case 9 : #1+8 
                 return "k"
             case 10: #2+8 
@@ -75,7 +81,7 @@ class StockFishPlayer(threading.Thread):
     def boardToFen(self):
         string = ""
         empty = 0
-        for index,square in enumerate(self.cb.board):
+        for index, square in enumerate(self.cb.board):
             
             piece = self.getPiece(square)
 
@@ -95,8 +101,7 @@ class StockFishPlayer(threading.Thread):
                 if index != 63:
                     string += "/"
 
-        # String is board
-        string +=  "KQkq - 0 1"
+        # String represents the board
 
         # Add color
         string += " w " if self.color == 1 else " b "

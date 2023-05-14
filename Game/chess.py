@@ -17,12 +17,15 @@ class Game:
     def __init__(self, board: list[int] = None, cooldown: int = 0):
     
         # Board / environment
-        self.originalBoard = Chessboard(board,[int(time.time()) - cooldown - 1] * 64,cooldown)
+        self.originalBoard = Chessboard(board,cooldown * 64,cooldown)
 
+        # Board
+        self.cb = Chessboard(board,cooldown * 64,cooldown)
+    
         # Events for threads
         self.stop_e = td.Event()
         # Playing as RL
-        self.player_1 = RLPlayer(self.cb, 1, self.stop_e, self.env)
+        self.player_1 = StockFishPlayer(self.cb, 1, self.stop_e)
         # Playing as StockFish
         self.player_2 = StockFishPlayer(self.cb, 2, self.stop_e)
     

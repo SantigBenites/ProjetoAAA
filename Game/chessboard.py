@@ -11,7 +11,7 @@ class Chessboard(gym.Env):
     #self.cooldown: int = 0
 
 
-    def __init__(self, board: list[int], cooldown: list[int], render_mode=None):
+    def __init__(self, board: list[int], cooldown: int, render_mode=None):
 
         # Original
         self.originalboard = board 
@@ -19,8 +19,6 @@ class Chessboard(gym.Env):
         # In use
         self.board = board
         self.timestamps = [int(time.time()) - self.cooldown - 1] * 64
-
-        self.action_space = self.legal_moves()
 
     # Step()
     # Updates an environment with actions returning the next agent observation, the reward for taking that actions, 
@@ -39,10 +37,10 @@ class Chessboard(gym.Env):
         return observation, reward, done, None
     
     def move(self, current_index: int, final_index: int):
-        self.cb.board[final_index] = self.cb.board[current_index]
-        self.cb.board[current_index] = 0
+        self.board[final_index] = self.board[current_index]
+        self.board[current_index] = 0
         
-        self.cb.timestamps[final_index] = int(time.time())
+        self.timestamps[final_index] = int(time.time())
 
     # Reset()
     # Resets the environment to an initial state, required before calling step. 
