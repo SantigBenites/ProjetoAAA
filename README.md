@@ -1,5 +1,7 @@
 # ProjetoAAA
 
+RL vs Genetic Algorithm in kung fu chess
+
 Santiago Benites fc54392
 
 Joao Ferreira fc55312
