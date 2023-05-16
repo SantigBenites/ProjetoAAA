@@ -5,32 +5,35 @@ from Game.moveGeneration import distance_to_edge
 import time, gym,itertools
 
 
-class Chessboard(gym.Env):
-
-    #self.board: list[int] = field(factory=list[int])
-    #self.timestamps: list[int] = field(factory=list[int])
-    #self.cooldown: int = 0
-
+class Chessboard():
 
     def __init__(self, board: list[int], cooldown: int, render_mode=None):
 
         distance_to_edge()
-        # Original
-        self.originalboard = board 
-        self.cooldown = cooldown
+
+        # All board states
+        self.board_states = []
+        
         # In use
         self.board = board
         self.timestamps = [int(time.time()) - self.cooldown - 1] * 64
 
-    # Step()
-    # Updates an environment with actions returning the next agent observation, the reward for taking that actions, 
-    # if the environment has terminated or truncated due to the latest action and information from the environment 
-    # about the step, i.e. metrics, debug info.
+    # Step
 
     def step(self, action: tuple[int,int], player:int) -> None:
+        """Step represents a discrete action on the board
 
+        Args:
+            action (tuple[int,int]): tuple of 2 ints, representative of initial piece index and final piece index
+            player (int): _description_
+
+        Returns:
+            _type_: something to be decided
+        """
         current_index, final_index = action
         self.move(current_index, final_index)
+
+        self.board_states.append(deepcopy(self.board))
         
         reward = self._reward(player)
         observation = self._observation()
@@ -39,12 +42,19 @@ class Chessboard(gym.Env):
         return observation, reward, done, None
     
     def move(self, current_index: int, final_index: int):
+        """Moves a certain piece from current_index to final_index
+
+        Args:
+            current_index (int): initial index of piece
+            final_index (int): end index of piece
+        """
         self.board[final_index] = self.board[current_index]
         self.board[current_index] = 0
         
         self.timestamps[final_index] = int(time.time())
 
     def destroyEnemyKing(self,player:int):
+        """Used by stockFish to circumvent checkmate logic"""
 
         if player == 1 :
             # 1+16
@@ -55,30 +65,6 @@ class Chessboard(gym.Env):
             self.board[self.board.index(1+8)] = 0
 
         return self._observation()
-
-    # Reset()
-    # Resets the environment to an initial state, required before calling step. 
-    # Returns the first agent observation for an episode and information, i.e. metrics, debug info.
-
-    def reset(self):
-        self.board = deepcopy(self.originalBoard)
-        self.timestamps = [int(time.time()) - self.cooldown - 1] * 64
-
-
-    # Render()
-    # Renders the environments to help visualise what the agent see, 
-    # examples modes are “human”, “rgb_array”, “ansi” for text.
-
-    def reset(self):
-
-        return
-    
-    # Close()
-    # Closes the environment, important when external software is used.
-
-    def close(self):
-        
-        return 
 
     def legal_moves(self,color) -> list[(int,int)]:
         """Legal moves for the current player."""
@@ -91,7 +77,14 @@ class Chessboard(gym.Env):
         return list(itertools.chain(*legal_moves))
     
     def valid_moves(self, index: int) -> list[int]:
-        
+        """Valid moves returns the valid moves for the piece in index
+
+        Args:
+            index (int): index in the board of the piece we want to analyze
+
+        Returns:
+            list[int]: indexes of all end positions of the piece in index
+        """
         current_time = int(time.time())
         
         if current_time - self.timestamps[index] >= self.cooldown:
@@ -100,13 +93,26 @@ class Chessboard(gym.Env):
         return []
     
     def pieceOnCooldown(self,index:int) -> bool:
+        """Check if the piece located in index is in cool down
 
+        Args:
+            index (int): index of the piece we want to check
+
+        Returns:
+            bool: bool representative if the piece in index is on cool down
+        """
         current_time = int(time.time())
         return True if current_time - self.timestamps[index] >= self.cooldown else False
 
-    # Gym vars
+    def reward(self, player) -> int:
+        """Reward of the current board for player
 
-    def _reward(self, player):
+        Args:
+            player (_type_): player color we want to analyze, if white  1 else black
+
+        Returns:
+            int: 1 of player won, -1 if player lost and 0 if draw
+        """
         if player == 1 :
             if 1+16 not in self.board: return  1
             if 1+8  not in self.board: return -1
@@ -114,13 +120,5 @@ class Chessboard(gym.Env):
             if 1+16 not in self.board: return -1
             if 1+8  not in self.board: return  1
         return 0
-
-
-    def _observation(self):
-
-        return self.board
     
 
-    def win_condition(self):
-
-        return True if 1+16 not in self.board or 1+8  not in self.board else False

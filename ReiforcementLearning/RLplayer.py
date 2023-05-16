@@ -6,7 +6,7 @@ from Game.cli_display import board_string
 
 class RLPlayer(threading.Thread):
 
-    def __init__(self, c_board: Chessboard, color: int, stop: threading.Event) -> None:
+    def __init__(self, c_board: Chessboard, color: int, stop: threading.Event, NeuralNetwork) -> None:
         threading.Thread.__init__(self, daemon=True) 
         self.cb = c_board
         self.stop = stop

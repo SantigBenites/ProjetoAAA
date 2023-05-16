@@ -17,7 +17,7 @@ class Game:
     def __init__(self, player1, player2 , board: Chessboard, stop :td.Event):
     
         # Board / environment
-        self.originalBoard = deepcopy( board)
+        self.originalBoard = deepcopy(board)
 
         # Board
         self.cb = board
