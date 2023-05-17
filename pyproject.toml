@@ -1,0 +1,17 @@
+[project]
+name = "test"
+version = "0.1.0"
+description = "Add a short description here"
+authors = [
+    { name = "João Ferreira", email = "jbrazf.01@gmail.com" }
+]
+dependencies = ["scikit-learn~=1.2.2", "tensorflow~=2.12.0", "matplotlib~=3.7.1", "seaborn~=0.12.2", "attrs~=23.1.0"]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true

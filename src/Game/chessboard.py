@@ -2,7 +2,8 @@ from attrs import define, field
 from Game.moveGeneration import possible_moves
 from copy import deepcopy
 from Game.moveGeneration import distance_to_edge
-import time, gym,itertools
+import time
+import itertools
 
 
 class Chessboard():
@@ -13,16 +14,17 @@ class Chessboard():
 
         # All board states
         self.board_states = []
-        
+
         # In use
         self.board = board
         self.timestamps = [int(time.time()) - self.cooldown - 1] * 64
 
     # Step
 
-    def step(self, action: tuple[int,int], player:int) -> None:
+    def step(self, action: tuple[int, int], player: int):
         """Step represents a discrete action on the board
-
+           The player is the one who is making the action,
+           and is the one calling this function
         Args:
             action (tuple[int,int]): tuple of 2 ints, representative of initial piece index and final piece index
             player (int): _description_
@@ -34,13 +36,13 @@ class Chessboard():
         self.move(current_index, final_index)
 
         self.board_states.append(deepcopy(self.board))
-        
+
         reward = self._reward(player)
         observation = self._observation()
         done = self.win_condition()
 
-        return observation, reward, done, None
-    
+        return observation, reward, done
+
     def move(self, current_index: int, final_index: int):
         """Moves a certain piece from current_index to final_index
 
@@ -50,13 +52,13 @@ class Chessboard():
         """
         self.board[final_index] = self.board[current_index]
         self.board[current_index] = 0
-        
+
         self.timestamps[final_index] = int(time.time())
 
-    def destroyEnemyKing(self,player:int):
+    def destroyEnemyKing(self, player: int):
         """Used by stockFish to circumvent checkmate logic"""
 
-        if player == 1 :
+        if player == 1:
             # 1+16
             self.board[self.board.index(1+16)] = 0
         else:
@@ -66,16 +68,17 @@ class Chessboard():
 
         return self._observation()
 
-    def legal_moves(self,color) -> list[(int,int)]:
+    def legal_moves(self, color) -> list[(int, int)]:
         """Legal moves for the current player."""
 
-        legal_moves:list(tuple[int,int]) = []
-        my_pieces = list(filter(lambda index: (self.board[index] >> 3 == color), range(0, 64)))
+        legal_moves: list(tuple[int, int]) = []
+        my_pieces = list(filter(lambda index: (
+            self.board[index] >> 3 == color), range(0, 64)))
         for piece in my_pieces:
             legal_moves.append(self.valid_moves(piece))
-            
+
         return list(itertools.chain(*legal_moves))
-    
+
     def valid_moves(self, index: int) -> list[int]:
         """Valid moves returns the valid moves for the piece in index
 
@@ -86,13 +89,13 @@ class Chessboard():
             list[int]: indexes of all end positions of the piece in index
         """
         current_time = int(time.time())
-        
+
         if current_time - self.timestamps[index] >= self.cooldown:
             pm = possible_moves(self.board, index)
-            return zip([index]*len(pm),pm)
+            return zip([index]*len(pm), pm)
         return []
-    
-    def pieceOnCooldown(self,index:int) -> bool:
+
+    def pieceOnCooldown(self, index: int) -> bool:
         """Check if the piece located in index is in cool down
 
         Args:
@@ -113,12 +116,14 @@ class Chessboard():
         Returns:
             int: 1 of player won, -1 if player lost and 0 if draw
         """
-        if player == 1 :
-            if 1+16 not in self.board: return  1
-            if 1+8  not in self.board: return -1
+        if player == 1:
+            if 1+16 not in self.board:
+                return 1
+            if 1+8 not in self.board:
+                return -1
         else:
-            if 1+16 not in self.board: return -1
-            if 1+8  not in self.board: return  1
+            if 1+16 not in self.board:
+                return -1
+            if 1+8 not in self.board:
+                return 1
         return 0
-    
-
