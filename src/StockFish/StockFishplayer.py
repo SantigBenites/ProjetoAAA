@@ -2,6 +2,7 @@ import threading
 import random
 import time
 import string
+import os
 
 from Game.pieces import pieces_table
 from Game.moveGeneration import possible_moves
@@ -13,6 +14,7 @@ from Game.cli_display import print_board
 
 timeScale = 2.0
 
+ENGINEPATH = os.getcwd() + "/assets/stockfish-ubuntu-20.04-x86-64"
 
 class StockFishPlayer(threading.Thread):
 
@@ -21,7 +23,7 @@ class StockFishPlayer(threading.Thread):
         self.cb = c_board
         self.stop = stop
         self.color = color
-        self.engine = chess.engine.SimpleEngine.popen_uci("/home/santig/Programs/StockFish/stockfish-ubuntu-20.04-x86-64")
+        self.engine = chess.engine.SimpleEngine.popen_uci(ENGINEPATH)
 
     def run(self) -> None:
         last_move = None

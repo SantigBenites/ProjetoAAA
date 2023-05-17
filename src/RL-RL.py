@@ -30,7 +30,13 @@ stop_e = td.Event()
 
 # Neural Network
 black_network = NeuralNetwork()
+if os.path.isdir("model/black_model"):
+    black_network.model = tf.keras.models.load_model('model/black_model') # type: ignore
+
 white_network = NeuralNetwork()
+if os.path.isdir("model/white_model"):
+    white_network.model = tf.keras.models.load_model('model/white_model') # type: ignore
+
 MAX_EPISODES = 1
 
 for episode_num in range(MAX_EPISODES):
@@ -55,3 +61,8 @@ for episode_num in range(MAX_EPISODES):
 
     white_network.update(white_x, white_y)
     black_network.update(black_x, black_y)
+
+
+
+white_network.model.save('model/white_model')
+black_network.model.save('model/black_model')
