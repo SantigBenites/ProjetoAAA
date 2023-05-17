@@ -10,8 +10,7 @@ from Game.cli_display import board_string
 import chess.engine
 from Game.cli_display import print_board
 
-engine = chess.engine.SimpleEngine.popen_uci(
-    "/home/santig/Programs/StockFish/stockfish-ubuntu-20.04-x86-64")
+
 timeScale = 2.0
 
 
@@ -22,6 +21,7 @@ class StockFishPlayer(threading.Thread):
         self.cb = c_board
         self.stop = stop
         self.color = color
+        self.engine = chess.engine.SimpleEngine.popen_uci("/home/santig/Programs/StockFish/stockfish-ubuntu-20.04-x86-64")
 
     def run(self) -> None:
         last_move = None
@@ -36,12 +36,14 @@ class StockFishPlayer(threading.Thread):
                 observation = self.cb.step(mv, self.color)
             self.board = observation
 
+        self.engine.quit()
+
     def choose_next_move(self):
         # TODO Add king capture to stockFish
         # board - player - castle - enPasssant - halfMove - fullmove
         board = chess.Board(fen=self.boardToFen())
         try:
-            result = engine.play(board, chess.engine.Limit(timeScale))
+            result = self.engine.play(board, chess.engine.Limit(timeScale))
         except chess.engine.EngineTerminatedError:
             return None
 

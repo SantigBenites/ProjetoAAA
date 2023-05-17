@@ -54,7 +54,8 @@ class Game:
 
         # print(f" player 1 fitness {self.player_1.fitness(self.cb.board)} player2 fitness {self.player_2.fitness(self.cb.board)}")
 
-        winner = 1 if 1+8 not in self.cb.board else 2
+        winner = 2 if 1+8 not in self.cb.board else 1
+        self.winner = winner
 
         white_x: list[Chessb] = []
         white_y: list[float] = []

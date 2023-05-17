@@ -31,13 +31,13 @@ stop_e = td.Event()
 # Neural Network
 black_network = NeuralNetwork()
 white_network = NeuralNetwork()
-MAX_EPISODES = 5
+MAX_EPISODES = 1
 
 for episode_num in range(MAX_EPISODES):
 
     print(f"Starting game {episode_num}")
     # Board
-    cb = Chessboard(board, cooldown * 64, cooldown)
+    cb = Chessboard(board.copy(), cooldown * 64, cooldown)
 
     # Players
     p1 = RLPlayer(cb, 1, stop_e, black_network)
@@ -47,6 +47,11 @@ for episode_num in range(MAX_EPISODES):
     chess = Game(p1, p2, cb, stop_e)
 
     white_x, white_y, black_x, black_y = chess.play(verbatim=False)
+
+    print(f"Game number {episode_num} was won by player {chess.winner}")
+    stop_e.clear()
+    p1.join()
+    p2.join()
 
     white_network.update(white_x, white_y)
     black_network.update(black_x, black_y)
