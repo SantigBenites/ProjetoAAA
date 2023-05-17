@@ -9,7 +9,7 @@ Chessb = list[int]
 
 class Chessboard():
 
-    def __init__(self, board: Chessb, cooldown: float, render_mode=None):
+    def __init__(self, board: Chessb, cooldown: float):
 
         distance_to_edge()
         self.cooldown = cooldown

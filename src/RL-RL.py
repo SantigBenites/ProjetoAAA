@@ -37,7 +37,7 @@ for episode_num in range(MAX_EPISODES):
 
     print(f"Starting game {episode_num}")
     # Board
-    cb = Chessboard(board.copy(), cooldown * 64, cooldown)
+    cb = Chessboard(board.copy(), cooldown)
 
     # Players
     p1 = RLPlayer(cb, 1, stop_e, black_network)
