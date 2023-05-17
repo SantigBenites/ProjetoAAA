@@ -3,18 +3,18 @@ import random
 import threading as td
 import multiprocessing as mp
 
-from Game.pieces import pieces_table
-from ReinforcementLearning.RLplayer import RLPlayer
-from StockFish.StockFishplayer import StockFishPlayer
+from copy import deepcopy
+from attrs import define, field
+from Game.chessboard import Chessb
 from Game.chessboard import Chessboard
 from Game.cli_display import print_board, board_string
-from copy import deepcopy
 
 TIME_OUT = 15
+NN_WIN_REWARD: int = 50  # reward for the winning move
+DISCOUNT_FACTOR: float = 0.9  # discount factor for the reward
 
 
 class Game:
-
     def __init__(self, player1, player2, board: Chessboard, stop: td.Event):
 
         # Board / environment
@@ -31,7 +31,7 @@ class Game:
         # Playing as StockFish
         self.player_2 = player2
 
-    def play(self, verbatim: bool = False) -> list[tuple[dict[str, int], int]]:
+    def play(self, verbatim: bool = False):
 
         start_time = int(time.time())
         curr_time = int(time.time())
@@ -47,9 +47,6 @@ class Game:
             time.sleep(0.1)
 
         self.stop_e.set()
-
-        print("Ended")
-        time.sleep(5)
         print_board(self.cb.board, 8)
 
         self.player_1.join()
@@ -57,19 +54,27 @@ class Game:
 
         # print(f" player 1 fitness {self.player_1.fitness(self.cb.board)} player2 fitness {self.player_2.fitness(self.cb.board)}")
 
-        return
+        winner = 1 if 1+8 not in self.cb.board else 2
 
-    def reset(self):
+        white_x: list[Chessb] = []
+        white_y: list[float] = []
+        black_x: list[Chessb] = []
+        black_y: list[float] = []
 
-        self.cb = deepcopy(self.originalBoard)
-        # TODO pass to event driven
+        self.cb.board_states.reverse()
+        reward = NN_WIN_REWARD
 
-    def close(self):
-        # Closes enviroment
-        self.player_1.join()
-        self.player_2.join()
+        for board, player in self.cb.board_states:
+            r = reward if player == winner else 0
+            if player == 1:
+                white_x.append(board)
+                white_y.append(r)
+            else:
+                black_x.append(board)
+                black_y.append(r)
+            reward *= DISCOUNT_FACTOR  # the first reward should be the full reward
 
-        return
+        return white_x, white_y, black_x, black_y
 
     def win_condition(self):
         # temporary

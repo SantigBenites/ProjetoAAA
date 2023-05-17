@@ -4,16 +4,18 @@ from Game.moveGeneration import distance_to_edge
 import time
 import itertools
 
+Chessb = list[int]
+
 
 class Chessboard():
 
-    def __init__(self, board: list[int], cooldown: float, render_mode=None):
+    def __init__(self, board: Chessb, cooldown: float, render_mode=None):
 
         distance_to_edge()
         self.cooldown = cooldown
 
         # All board states
-        self.board_states = []
+        self.board_states: list[tuple[Chessb, int]] = []
 
         # In use
         self.board = board
@@ -32,17 +34,12 @@ class Chessboard():
         Returns:
             _type_: something to be decided
         """
-        # TODO pls i don't remember this ? The index is 0-63 or else?
         current_index, final_index = action
         self.move(current_index, final_index)
 
         # TODO since we have list[int] do we really need to do deepcopy?
         #! the faster this line is, the better since it will be called a lot
-        self.board_states.append(deepcopy(self.board))
-
-        # TODO since we only get experience after the game is over, do we really need to return anything?
-        # ? ie, at the end of the game we just need to update the reward of the LAST move on the winning side
-
+        self.board_states.append((self.board.copy(), player))
         return
 
     def move(self, current_index: int, final_index: int):
@@ -74,15 +71,15 @@ class Chessboard():
         """Legal moves for the current player."""
 
         legal_moves = []
-        my_pieces = list(filter(lambda index: (self.board[index] >> 3 == color), range(0, 64)))
+        my_pieces = list(filter(lambda index: (
+            self.board[index] >> 3 == color), range(0, 64)))
 
-        
         for piece in my_pieces:
             legal_moves.append(self.valid_moves(piece))
 
         return list(itertools.chain(*legal_moves))
 
-    def valid_moves(self, index: int) -> list[tuple[int,int]]:
+    def valid_moves(self, index: int) -> list[tuple[int, int]]:
         """Valid moves returns the valid moves for the piece in index
 
         Args:
