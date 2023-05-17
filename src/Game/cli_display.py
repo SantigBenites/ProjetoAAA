@@ -100,7 +100,8 @@ def print_board(board: Iterable, size: int):
         rep.append(middle)
     
     rep[-1] = bottom
-    
+    #import os
+    #os.system('clear')
     print(*rep, sep="\n", flush=True)
 
 def board_string(board:Iterable, size: int):
