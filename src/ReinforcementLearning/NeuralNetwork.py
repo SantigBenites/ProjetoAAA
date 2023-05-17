@@ -3,6 +3,7 @@ from tensorflow import keras
 from keras import layers
 from keras.models import Sequential
 import logging
+import numpy as np
 
 
 logging.getLogger('tensorflow').setLevel(logging.FATAL)
@@ -16,12 +17,13 @@ class NeuralNetwork(tf.keras.Model):
 
     def __init__(self) -> None:
         super().__init__()
-        conv_depth = 4
-        model = Sequential()
-
-        model.add(layers.Dense(64, activation='relu'))
-        model.add(layers.Dense(32, activation='relu'))
-        model.add(layers.Dense(1, 'sigmoid'))
+        
+        # Create a Sequential model and add a Dense layer as the first layer.
+        model = tf.keras.models.Sequential()
+        model.add(tf.keras.layers.Flatten())
+        model.add(tf.keras.layers.Dense(32, activation='relu'))
+        model.add(tf.keras.layers.Dense(16))
+        model.add(tf.keras.layers.Dense(1))
         
 
         model.compile(optimizer='adam',
@@ -58,5 +60,6 @@ class NeuralNetwork(tf.keras.Model):
         Args:
             board (list[int]): current board
         """
-        
-        return self.model.predict(board)
+        arr = np.array(board)
+        print(arr.shape)
+        return self.model.predict(arr)
