@@ -5,7 +5,7 @@ import time
 from Game.pieces import pieces_table
 from Game.chessboard import Chessboard
 from Game.cli_display import board_string
-from NeuralNetwork import NeuralNetwork
+from ReinforcementLearning.NeuralNetwork import NeuralNetwork
 
 
 class RLPlayer(threading.Thread):
@@ -15,6 +15,7 @@ class RLPlayer(threading.Thread):
         self.cb = c_board
         self.stop = stop
         self.color = color
+        self.NN = NN
 
     def run(self) -> None:
         # we will need to implement the algorithm here
@@ -33,16 +34,20 @@ class RLPlayer(threading.Thread):
     def choose_next_move(self) -> tuple[int, int]:
 
         # TODO play function
-        # this "5" is something we can tune
-        potentialBoards = [self.cb]
-        for i in range(5):
-            # see the return of the moves ahead:
-            # get a list of possible moves
-            # repeat until we are 5 layers deep
+        current_moves = self.cb.legal_moves(self.color)
+        move_values = []
+        for move in current_moves:
+            pred_board = self.cb.move_sim(move[0],move[1])
+            pred_value = self.NN.predict(pred_board)
 
-            # then do the move that got to that best move
-            pass
-        pass
+            move_values.append((move,pred_value))
+        
+        print(move_values[0])
+        max_move,max_value = max(move_values,key=lambda x:x[1])
+
+        print(max_move)
+
+        return max_move
 
     def random_move(self):
         moves = self.cb.legal_moves(self.color)

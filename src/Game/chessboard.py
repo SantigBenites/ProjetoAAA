@@ -7,9 +7,10 @@ import itertools
 
 class Chessboard():
 
-    def __init__(self, board: list[int], cooldown: int, render_mode=None):
+    def __init__(self, board: list[int], cooldown: float, render_mode=None):
 
         distance_to_edge()
+        self.cooldown = cooldown
 
         # All board states
         self.board_states = []
@@ -41,11 +42,8 @@ class Chessboard():
 
         # TODO since we only get experience after the game is over, do we really need to return anything?
         # ? ie, at the end of the game we just need to update the reward of the LAST move on the winning side
-        reward = self._reward(player)
-        observation = self._observation()
-        done = self.win_condition()
 
-        return observation, reward, done
+        return
 
     def move(self, current_index: int, final_index: int):
         """Moves a certain piece from current_index to final_index
@@ -70,20 +68,21 @@ class Chessboard():
             print("removed 1+8")
             self.board[self.board.index(1+8)] = 0
 
-        return self._observation()
+        return
 
     def legal_moves(self, color) -> list[tuple[int, int]]:
         """Legal moves for the current player."""
 
-        legal_moves: list[tuple[int, int]] = []
-        my_pieces = list(filter(lambda index: (
-            self.board[index] >> 3 == color), range(0, 64)))
+        legal_moves = []
+        my_pieces = list(filter(lambda index: (self.board[index] >> 3 == color), range(0, 64)))
+
+        
         for piece in my_pieces:
             legal_moves.append(self.valid_moves(piece))
 
         return list(itertools.chain(*legal_moves))
 
-    def valid_moves(self, index: int) -> list[int]:
+    def valid_moves(self, index: int) -> list[tuple[int,int]]:
         """Valid moves returns the valid moves for the piece in index
 
         Args:
@@ -96,7 +95,7 @@ class Chessboard():
 
         if current_time - self.timestamps[index] >= self.cooldown:
             pm = possible_moves(self.board, index)
-            return zip([index]*len(pm), pm)
+            return list(zip([index]*len(pm), pm))
         return []
 
     def pieceOnCooldown(self, index: int) -> bool:

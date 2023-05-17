@@ -4,7 +4,7 @@ import threading as td
 import multiprocessing as mp
 
 from Game.pieces import pieces_table
-from ReiforcementLearning.RLplayer import RLPlayer
+from ReinforcementLearning.RLplayer import RLPlayer
 from StockFish.StockFishplayer import StockFishPlayer
 from Game.chessboard import Chessboard
 from Game.cli_display import print_board, board_string
@@ -63,11 +63,6 @@ class Game:
 
         self.cb = deepcopy(self.originalBoard)
         # TODO pass to event driven
-
-    def render(self, mode: str = 'unicode') -> str:
-        # Shows Chess Board using cli_display
-
-        return board_string(self.cb.board, 8)
 
     def close(self):
         # Closes enviroment
