@@ -22,7 +22,7 @@ board = [3+8, 5+8, 4+8, 2+8, 1+8, 4+8, 5+8, 3+8,
          0, 0, 0, 0, 0, 0, 0, 0,
          3+16, 5+16, 4+16, 2+16, 1+16, 4+16, 5+16, 3+16
          ]
-cooldown = 0.01
+cooldown = 0.001
 
 # End event
 stop_e = td.Event()
@@ -47,5 +47,5 @@ for episode_num in range(MAX_EPISODES):
 
     white_x, white_y, black_x, black_y = chess.play(verbatim=False)
 
-    black_network.update(white_x, white_y)  # TODO Update
-    white_network.update(black_x, black_y)
+    white_network.update(white_x, white_y)
+    black_network.update(black_x, black_y)

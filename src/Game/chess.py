@@ -9,7 +9,7 @@ from Game.chessboard import Chessb
 from Game.chessboard import Chessboard
 from Game.cli_display import print_board, board_string
 
-TIME_OUT = 15
+TIME_OUT = 100
 NN_WIN_REWARD: int = 50  # reward for the winning move
 DISCOUNT_FACTOR: float = 0.9  # discount factor for the reward
 
@@ -40,11 +40,11 @@ class Game:
         self.player_2.start()
 
         # and (start_time + TIME_OUT > curr_time):
-        while ((1+8 in self.cb.board) and (1+16 in self.cb.board)):
+        while ((1+8 in self.cb.board) and (1+16 in self.cb.board)): #and (start_time + TIME_OUT > curr_time)):
             curr_time = int(time.time())
             if verbatim:
                 print_board(self.cb.board, 8)
-            time.sleep(0.1)
+            #time.sleep(0.1)
 
         self.stop_e.set()
         print_board(self.cb.board, 8)

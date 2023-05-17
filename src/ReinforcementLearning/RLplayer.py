@@ -31,7 +31,7 @@ class RLPlayer(threading.Thread):
                 # time.sleep(0.1)
                 self.cb.step(mv, self.color)
 
-    def choose_next_move(self) -> tuple[int, int]:
+    def choose_next_move(self) -> None | tuple[int, int]:
 
         # TODO play function
         current_moves = self.cb.legal_moves(self.color)
@@ -42,6 +42,8 @@ class RLPlayer(threading.Thread):
 
             move_values.append((move,pred_value))
         
+        if len(move_values) == 0:
+            return None
         max_move,max_value = max(move_values,key=lambda x:x[1])
 
         return max_move
