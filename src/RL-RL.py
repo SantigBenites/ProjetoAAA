@@ -9,6 +9,11 @@ from Game.chess import Game
 from Game.chessboard import Chessboard
 import threading as td
 
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+import tensorflow as tf
+
 # Game vars
 board =[3+8,5+8,4+8,2+8,1+8,4+8,5+8,3+8,
         0,0,0,0,0,0,0,0,

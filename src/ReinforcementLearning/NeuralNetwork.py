@@ -12,24 +12,25 @@ logging.getLogger('tensorflow').setLevel(logging.FATAL)
 NN_WIN_REWARD: int = 50  # reward for the winning move
 DISCOUNT_FACTOR: float = 0.9  # discount factor for the reward: [0.9, 0.99]
 
-
-class NeuralNetwork(tf.keras.Model):
+class NeuralNetwork():
 
     def __init__(self) -> None:
-        super().__init__()
         
         # Create a Sequential model and add a Dense layer as the first layer.
-        model = tf.keras.models.Sequential()
-        model.add(tf.keras.layers.Flatten())
-        model.add(tf.keras.layers.Dense(32, activation='relu'))
-        model.add(tf.keras.layers.Dense(16))
-        model.add(tf.keras.layers.Dense(1))
-        
+        model = keras.models.Sequential()
+        model.add(keras.layers.InputLayer(input_shape=(64)))
+        model.add(keras.layers.Dense(64, activation = 'relu'))
+        model.add(keras.layers.Dense(32, activation = 'relu'))
+        model.add(keras.layers.Dense(1, activation = 'relu'))
 
+        
         model.compile(optimizer='adam',
                       loss=tf.losses.CategoricalCrossentropy(from_logits=True),
                       metrics=['accuracy'])
         
+        #print(model.summary())
+        #print('[INPUT_SHAPE]', model.input_shape)
+             
         self.model = model
 
     def update(self, boardHistory: list[tuple[list[int], int]], winner: int):
@@ -60,6 +61,6 @@ class NeuralNetwork(tf.keras.Model):
         Args:
             board (list[int]): current board
         """
-        arr = np.array(board)
-        print(arr.shape)
-        return self.model.predict(arr)
+        arr = np.array(board).reshape(1,-1)
+        
+        return self.model.predict(arr,verbose = 0)

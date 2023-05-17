@@ -42,10 +42,7 @@ class RLPlayer(threading.Thread):
 
             move_values.append((move,pred_value))
         
-        print(move_values[0])
         max_move,max_value = max(move_values,key=lambda x:x[1])
-
-        print(max_move)
 
         return max_move
 
