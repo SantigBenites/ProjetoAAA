@@ -1,4 +1,3 @@
-from attrs import define, field
 from Game.moveGeneration import possible_moves
 from copy import deepcopy
 from Game.moveGeneration import distance_to_edge
@@ -32,11 +31,16 @@ class Chessboard():
         Returns:
             _type_: something to be decided
         """
+        # TODO pls i don't remember this ? The index is 0-63 or else?
         current_index, final_index = action
         self.move(current_index, final_index)
 
+        # TODO since we have list[int] do we really need to do deepcopy?
+        #! the faster this line is, the better since it will be called a lot
         self.board_states.append(deepcopy(self.board))
 
+        # TODO since we only get experience after the game is over, do we really need to return anything?
+        # ? ie, at the end of the game we just need to update the reward of the LAST move on the winning side
         reward = self._reward(player)
         observation = self._observation()
         done = self.win_condition()
@@ -68,10 +72,10 @@ class Chessboard():
 
         return self._observation()
 
-    def legal_moves(self, color) -> list[(int, int)]:
+    def legal_moves(self, color) -> list[tuple[int, int]]:
         """Legal moves for the current player."""
 
-        legal_moves: list(tuple[int, int]) = []
+        legal_moves: list[tuple[int, int]] = []
         my_pieces = list(filter(lambda index: (
             self.board[index] >> 3 == color), range(0, 64)))
         for piece in my_pieces:
