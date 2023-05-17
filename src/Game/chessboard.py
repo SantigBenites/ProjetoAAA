@@ -131,3 +131,11 @@ class Chessboard():
             if 1+8 not in self.board:
                 return 1
         return 0
+
+    def move_sim(self, piece_index: int, move_location_index):
+        copy = self.board.copy()
+
+        copy[move_location_index] = copy[piece_index]
+        copy[piece_index] = 0
+
+        return copy
