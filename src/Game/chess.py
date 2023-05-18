@@ -2,16 +2,13 @@ import time
 import threading as td
 
 from lib.typedef import PlayerDef
+from lib.constants import config
 from Game.chessboard import Chessboard
 from Game.cli_display import print_board
 
 from GeneticAlgorythm.GAPlayer import GAPlayer
 from ReinforcementLearning.RLplayer import RLPlayer
 from StockFish.StockFishplayer import StockFishPlayer
-
-TIME_OUT = 100
-NN_WIN_REWARD: int = 50  # reward for the winning move
-DISCOUNT_FACTOR: float = 0.9  # discount factor for the reward
 
 player_map = {
     "RL": RLPlayer,
@@ -21,11 +18,11 @@ player_map = {
 
 
 class Game:
-    def __init__(self, player1: PlayerDef, player2: PlayerDef, board: Chessboard, stop: td.Event):
-        self.player_1 = player_map[player1.type](player1.config)
-        self.player_2 = player_map[player2.type](player2.config)
+    def __init__(self, player1: PlayerDef, player2: PlayerDef, board: Chessboard):
+        self.stop_e = td.Event()
+        self.player_1 = player_map[player1.type](player1.config, self.stop_e)
+        self.player_2 = player_map[player2.type](player2.config, self.stop_e)
         self.cb = board
-        self.stop_e = stop
 
     def play(self, verbatim: bool = False):
 
@@ -60,7 +57,7 @@ class Game:
         black_y: list[float] = []
 
         self.cb.board_states.reverse()
-        reward = NN_WIN_REWARD
+        reward = config.nn_win_reward
 
         for board, player in self.cb.board_states:
             r = reward if player == winner else 0
@@ -70,7 +67,7 @@ class Game:
             else:
                 black_x.append(board)
                 black_y.append(r)
-            reward *= DISCOUNT_FACTOR  # the first reward should be the full reward
+            reward *= config.discount_factor
 
         return white_x, white_y, black_x, black_y
 

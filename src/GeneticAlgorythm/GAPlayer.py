@@ -1,6 +1,6 @@
-import threading
-import random
 import time
+import random
+import threading
 
 
 from lib.typedef import GAPlayerConfig
@@ -12,12 +12,12 @@ from Game.moveGeneration import possible_moves, square_to_edge
 
 class GAPlayer(threading.Thread):
 
-    def __init__(self, config: GAPlayerConfig) -> None:
+    def __init__(self, config: GAPlayerConfig, stop: threading.Event) -> None:
         threading.Thread.__init__(self, daemon=True)
         self.cb = config.c_board
-        self.stop = config.stop
         self.color = config.color
         self.genotype = config.genotype
+        self.stop = stop
 
     def run(self) -> None:
 

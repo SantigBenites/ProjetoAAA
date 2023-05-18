@@ -37,11 +37,11 @@ for episode_num in range(config.max_episodes):
     cb = Chessboard(config.base_board.copy(), config.cooldown)
 
     # Players
-    p1_def = PlayerDef("RL", RlPlayerConfig(cb, 1, stop_e, white_network))
-    p2_def = PlayerDef("SF", SFPlayerConfig(cb, 2, stop_e))
+    p1_def = PlayerDef("RL", RlPlayerConfig(cb, 1, white_network))
+    p2_def = PlayerDef("SF", SFPlayerConfig(cb, 2))
 
     # Game
-    chess = Game(p1_def, p2_def, cb, stop_e)
+    chess = Game(p1_def, p2_def, cb)
 
     white_x, white_y, black_x, black_y = chess.play(verbatim=False)
 

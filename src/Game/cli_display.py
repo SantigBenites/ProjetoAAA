@@ -1,4 +1,4 @@
-from typing import Iterator, Iterable, LiteralString
+from typing import Iterator, Iterable
 from functools import cache
 
 pieces_table = {
@@ -63,7 +63,7 @@ def chunks(array: Iterable, size: int) -> Iterator[list]:
 
 
 @cache
-def board_divisions(cell_size: int, cell_count: int) -> tuple[str, str, str, LiteralString]:
+def board_divisions(cell_size: int, cell_count: int):
     """Generates the rows needed to print a board cleanly
         Expects cell_size and cell_count to be bigger than one 
     Args:

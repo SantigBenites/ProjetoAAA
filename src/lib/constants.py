@@ -29,5 +29,9 @@ config = RunConfig(
     cooldown=0.1,
     max_episodes=100,
     base_board=_BOARD,
-    ga_genotype=_GA_GENOTYPE
+    ga_genotype=_GA_GENOTYPE,
+    time_out=100,
+    nn_win_reward=50,
+    discount_factor=0.9,
+    verbose=True
 )

@@ -13,12 +13,12 @@ ENGINEPATH = os.getcwd() + "/assets/stockfish-ubuntu-20.04-x86-64"
 
 class StockFishPlayer(threading.Thread):
 
-    def __init__(self, config: SFPlayerConfig) -> None:
+    def __init__(self, config: SFPlayerConfig, stop: threading.Event) -> None:
         threading.Thread.__init__(self, daemon=True)
         self.cb = config.c_board
-        self.stop = config.stop
         self.color = config.color
         self.engine = chess.engine.SimpleEngine.popen_uci(ENGINEPATH)
+        self.stop = stop
 
     # def __init__(self, c_board: Chessboard, color: int, stop: threading.Event) -> None:
     #    threading.Thread.__init__(self, daemon=True)

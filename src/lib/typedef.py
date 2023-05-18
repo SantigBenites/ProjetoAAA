@@ -9,7 +9,6 @@ from threading import Event
 class RlPlayerConfig:
     c_board: Chessboard
     color: int
-    stop: Event
     NN: NeuralNetwork
 
 
@@ -17,7 +16,6 @@ class RlPlayerConfig:
 class GAPlayerConfig:
     c_board: Chessboard
     color: int
-    stop: Event
     genotype: dict[str, int]
 
 
@@ -25,7 +23,6 @@ class GAPlayerConfig:
 class SFPlayerConfig:
     c_board: Chessboard
     color: int
-    stop: Event
 
 
 @define
@@ -40,3 +37,7 @@ class RunConfig:
     max_episodes: int
     base_board: list[int]
     ga_genotype: dict[str, int]
+    time_out: int
+    nn_win_reward: int
+    discount_factor: float
+    verbose: bool

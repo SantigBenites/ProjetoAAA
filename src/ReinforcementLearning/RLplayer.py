@@ -7,12 +7,12 @@ from lib.typedef import RlPlayerConfig
 
 class RLPlayer(threading.Thread):
 
-    def __init__(self, config: RlPlayerConfig) -> None:
+    def __init__(self, config: RlPlayerConfig, stop: threading.Event) -> None:
         threading.Thread.__init__(self, daemon=True)
         self.cb = config.c_board
-        self.stop = config.stop
         self.color = config.color
         self.NN = config.NN
+        self.stop = stop
 
     # def __init__(self, c_board: Chessboard, color: int, stop: threading.Event, NN: NeuralNetwork) -> None:
     #    threading.Thread.__init__(self, daemon=True)
@@ -38,6 +38,9 @@ class RLPlayer(threading.Thread):
     def choose_next_move(self) -> None | tuple[int, int]:
 
         current_moves = self.cb.legal_moves(self.color)
+
+        if current_moves == []:
+            return None
 
         rand = random.Random()
         if rand.random() < 0.3:
