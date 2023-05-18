@@ -68,6 +68,11 @@ if __name__ == "__main__":
         white_x, white_y, black_x, black_y = list(map(list, zip(*results)))
         print('[INFO]', f'got all results in episode {episode_num}')
 
+        print('[INFO]', f'updating networks')
+        print('[INFO]', f'white_x: {len(white_x)}')
+        print('[INFO]', f'white_y: {len(white_y)}')
+        print('[INFO]', f'black_x: {len(black_x)}')
+        print('[INFO]', f'black_y: {len(black_y)}')
         for (x, y) in zip(white_x, white_y):
             white_network.update(x, y)
 
