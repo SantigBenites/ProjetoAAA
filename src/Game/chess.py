@@ -28,16 +28,12 @@ class Game:
 
     def play(self, verbatim: bool = False):
 
-        start_time = int(time.time())
-        curr_time = int(time.time())
-
         self.player_1.start()
         self.player_2.start()
 
         # and (start_time + TIME_OUT > curr_time):
         # and (start_time + TIME_OUT > curr_time)):
         while ((1+8 in self.cb.board) and (1+16 in self.cb.board)):
-            curr_time = int(time.time())
             if verbatim:
                 print_board(self.cb.board, 8)
             time.sleep(0.1)
@@ -45,7 +41,7 @@ class Game:
         self.stop_e.set()
         # print_board(self.cb.board, 8)
 
-        # print('[GAME]', f'Before Joining threads', flush=True)
+        print('[GAME]', f'Before Joining threads', flush=True)
 
         self.player_1.join()
         self.player_2.join()
@@ -73,7 +69,7 @@ class Game:
                 black_y.append(r)
             reward *= config.discount_factor
 
-        # print('[GAME]', f'game ended with winner {winner}', flush=True)
+        print('[GAME]', f'game ended with winner {winner}', flush=True)
 
         return white_x, white_y, black_x, black_y
 
