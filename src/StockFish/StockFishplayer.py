@@ -2,8 +2,10 @@ import os
 import string
 import threading
 import chess.engine
+import random
 
 from Game.chessboard import Chessboard
+from chess.engine import EngineTerminatedError
 from lib.typedef import SFPlayerConfig
 
 timeScale = 2.0
@@ -28,23 +30,38 @@ class StockFishPlayer(threading.Thread):
     #    self.engine = chess.engine.SimpleEngine.popen_uci(ENGINEPATH)
 
     def run(self) -> None:
-        last_move = None
+        
         while not self.stop.is_set():
             mv = self.choose_next_move()
             # time.sleep(0.2)
-            last_move = mv
-            if mv == None:
-                observation = self.cb.destroyEnemyKing(self.color)
-                return
-            else:
-                observation = self.cb.step(mv, self.color)
-            self.board = observation
+            if mv != None:
+                self.cb.step(mv, self.color)
 
-        self.engine.quit()
+        try:
+            self.engine.quit()
+        except EngineTerminatedError:
+            # Engine terminated just assume things went wrong somewhere
+            pass
 
-    def choose_next_move(self):
-        # TODO Add king capture to stockFish
+
+    def choose_next_move(self) -> None | tuple[int,int]:
+        """Choose next move for StockFish player based on the StockFish engine
+
+        Returns:
+            None | tuple[int,int]: Returns the best move the player can do based on the StockFish engine, or returns None if the king is either in checkmate or dead
+        """
         # board - player - castle - enPasssant - halfMove - fullmove
+
+        legal_moves = self.cb.legal_moves(self.color)
+        enemy_king = 1+8 if self.color == 2 else 1+16
+        try:
+            enemy_king_index = self.cb.board.index(enemy_king)
+        except ValueError:
+            return None
+        king_in_check = [x for x in legal_moves if x[1] == enemy_king_index]
+        if king_in_check != []:
+            return random.choice(king_in_check)
+
         board = chess.Board(fen=self.boardToFen())
         try:
             result = self.engine.play(board, chess.engine.Limit(timeScale))
@@ -55,7 +72,7 @@ class StockFishPlayer(threading.Thread):
 
         return self.standardMoveToLocation(str(best_move))
 
-    def standardMoveToLocation(self, move):
+    def standardMoveToLocation(self, move) -> None | tuple[int,int]:
 
         if move == None:
             return None

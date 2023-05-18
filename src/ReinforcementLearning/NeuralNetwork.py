@@ -42,6 +42,9 @@ class NeuralNetwork():
             winner (int): who won the game represented as a int, 1 being white 2 being black
         """
 
+        if x == [] or y == []:
+            return 
+
         self.model.fit(x, y, verbose=0)
 
     def predict(self, board: list[int]) -> float:

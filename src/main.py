@@ -10,6 +10,8 @@ from ReinforcementLearning.NeuralNetwork import NeuralNetwork
 from lib.typedef import PlayerDef, RlPlayerConfig, GAPlayerConfig, SFPlayerConfig
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
+tf.keras.utils.disable_interactive_logging()
+tf.get_logger().setLevel("WARNING")
 
 
 def get_player_pairs(pop_size: int, white_net: NeuralNetwork, black_net: NeuralNetwork):

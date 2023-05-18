@@ -29,7 +29,7 @@ if os.path.isdir("model/white_model"):
         'model/white_model')  # type: ignore
 
 
-for episode_num in range(config.max_episodes):
+for episode_num in range(1):
 
     print(f"Starting game {episode_num}")
     # Board
@@ -37,12 +37,12 @@ for episode_num in range(config.max_episodes):
 
     # Players
     p1_def = PlayerDef("RL", RlPlayerConfig(1, white_network))
-    p2_def = PlayerDef("SF", SFPlayerConfig(2))
+    p2_def = PlayerDef("SF", RlPlayerConfig(1, black_network))
 
     # Game
     chess = Game(p1_def, p2_def)
 
-    white_x, white_y, black_x, black_y = chess.play(verbatim=False)
+    white_x, white_y, black_x, black_y = chess.play(verbatim=True)
 
     print(f"Game number {episode_num} was won by player {chess.winner}")
     stop_e.clear()
@@ -51,5 +51,5 @@ for episode_num in range(config.max_episodes):
     black_network.update(black_x, black_y)
 
 
-white_network.model.save('model/white_model')
-black_network.model.save('model/black_model')
+#white_network.model.save('model/white_model')
+#black_network.model.save('model/black_model')

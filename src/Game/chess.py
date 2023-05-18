@@ -16,6 +16,8 @@ player_map = {
     "SF": StockFishPlayer
 }
 
+TIME_OUT = 100
+
 
 class Game:
     def __init__(self, player1: PlayerDef, player2: PlayerDef):
@@ -30,21 +32,25 @@ class Game:
 
         self.player_1.start()
         self.player_2.start()
+        
+        start_time = int(time.time())
+        curr_time = int(time.time())
 
         # and (start_time + TIME_OUT > curr_time):
         # and (start_time + TIME_OUT > curr_time)):
-        while ((1+8 in self.cb.board) and (1+16 in self.cb.board)):
+        while ((1+8 in self.cb.board) and (1+16 in self.cb.board) and (start_time + TIME_OUT > curr_time)):
+            curr_time = int(time.time())
             if verbatim:
                 print_board(self.cb.board, 8)
             time.sleep(0.1)
 
         self.stop_e.set()
-        # print_board(self.cb.board, 8)
 
         print('[GAME]', f'Before Joining threads', flush=True)
 
         self.player_1.join()
         self.player_2.join()
+        print_board(self.cb.board, 8)
 
         # print(f" player 1 fitness {self.player_1.fitness(self.cb.board)} player2 fitness {self.player_2.fitness(self.cb.board)}")
 
