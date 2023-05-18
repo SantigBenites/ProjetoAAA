@@ -65,6 +65,9 @@ if __name__ == "__main__":
             results = pool.starmap(task, pairs)
             pool.close()
 
+        print('[MAIN]: got results')
+        print('[MAIN]: results', results)
+
         white_x, white_y, black_x, black_y = list(map(list, zip(*results)))
         print('[INFO]', f'got all results in episode {episode_num}')
 
