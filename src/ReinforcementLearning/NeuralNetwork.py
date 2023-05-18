@@ -2,7 +2,6 @@ import tensorflow as tf
 from tensorflow import keras
 import logging
 import numpy as np
-from Game.chessboard import Chessb
 
 logging.getLogger('tensorflow').setLevel(logging.FATAL)
 # CONSTANTS
@@ -30,7 +29,7 @@ class NeuralNetwork():
 
         self.model = model
 
-    def update(self, x: list[Chessb], y: list[float]):
+    def update(self, x: list[list[int]], y: list[float]):
         """This method given a certain board history and a winner updates the NN
 
         Args:

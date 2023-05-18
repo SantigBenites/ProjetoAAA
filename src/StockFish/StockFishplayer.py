@@ -1,35 +1,37 @@
-import threading
-import random
-import time
-import string
 import os
-
-from Game.pieces import pieces_table
-from Game.moveGeneration import possible_moves
-from Game.chessboard import Chessboard
-from Game.cli_display import board_string
+import string
+import threading
 import chess.engine
-from Game.cli_display import print_board
 
+
+from lib.typedef import SFPlayerConfig
 
 timeScale = 2.0
 
 ENGINEPATH = os.getcwd() + "/assets/stockfish-ubuntu-20.04-x86-64"
 
+
 class StockFishPlayer(threading.Thread):
 
-    def __init__(self, c_board: Chessboard, color: int, stop: threading.Event) -> None:
+    def __init__(self, config: SFPlayerConfig) -> None:
         threading.Thread.__init__(self, daemon=True)
-        self.cb = c_board
-        self.stop = stop
-        self.color = color
+        self.cb = config.c_board
+        self.stop = config.stop
+        self.color = config.color
         self.engine = chess.engine.SimpleEngine.popen_uci(ENGINEPATH)
+
+    # def __init__(self, c_board: Chessboard, color: int, stop: threading.Event) -> None:
+    #    threading.Thread.__init__(self, daemon=True)
+    #    self.cb = c_board
+    #    self.stop = stop
+    #    self.color = color
+    #    self.engine = chess.engine.SimpleEngine.popen_uci(ENGINEPATH)
 
     def run(self) -> None:
         last_move = None
         while not self.stop.is_set():
             mv = self.choose_next_move()
-            #time.sleep(0.2)
+            # time.sleep(0.2)
             last_move = mv
             if mv == None:
                 observation = self.cb.destroyEnemyKing(self.color)

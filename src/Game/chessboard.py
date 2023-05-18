@@ -1,21 +1,20 @@
-from Game.moveGeneration import possible_moves
-from copy import deepcopy
-from Game.moveGeneration import distance_to_edge
 import time
 import itertools
 
-Chessb = list[int]
+
+from Game.moveGeneration import possible_moves
+from Game.moveGeneration import distance_to_edge
 
 
 class Chessboard():
 
-    def __init__(self, board: Chessb, cooldown: float):
+    def __init__(self, board: list[int], cooldown: float):
 
         distance_to_edge()
         self.cooldown = cooldown
 
         # All board states
-        self.board_states: list[tuple[Chessb, int]] = []
+        self.board_states: list[tuple[list[int], int]] = []
 
         # In use
         self.board = board

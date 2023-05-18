@@ -1,35 +1,54 @@
 import time
-import random
 import threading as td
-import multiprocessing as mp
 
-from copy import deepcopy
-from attrs import define, field
-from Game.chessboard import Chessb
+from lib.typedef import PlayerDef
 from Game.chessboard import Chessboard
-from Game.cli_display import print_board, board_string
+from Game.cli_display import print_board
+
+from GeneticAlgorythm.GAPlayer import GAPlayer
+from ReinforcementLearning.RLplayer import RLPlayer
+from StockFish.StockFishplayer import StockFishPlayer
 
 TIME_OUT = 100
 NN_WIN_REWARD: int = 50  # reward for the winning move
 DISCOUNT_FACTOR: float = 0.9  # discount factor for the reward
 
+player_map = {
+    "RL": RLPlayer,
+    "GA": GAPlayer,
+    "SF": StockFishPlayer
+}
+
 
 class Game:
-    def __init__(self, player1, player2, board: Chessboard, stop: td.Event):
+    def __init__(self,
+                 player1: PlayerDef,
+                 player2: PlayerDef,
+                 board: Chessboard,
+                 stop: td.Event):
 
-        # Board / environment
-        self.originalBoard = deepcopy(board)
-
-        # Board
+        self.player_1 = player_map[player1.type](player1.config)
+        self.player_2 = player_map[player2.type](player2.config)
         self.cb = board
-
-        # Events for threads
         self.stop_e = stop
 
-        # Playing as RL
-        self.player_1 = player1
-        # Playing as StockFish
-        self.player_2 = player2
+        pass
+
+    # def __init__(self, player1, player2, board: Chessboard, stop: td.Event):
+    #
+    #    # Board / environment
+    #    self.originalBoard = deepcopy(board)
+    #
+    #    # Board
+    #    self.cb = board
+    #
+    #    # Events for threads
+    #    self.stop_e = stop
+    #
+    #    # Playing as RL
+    #    self.player_1 = player1
+    #    # Playing as StockFish
+    #    self.player_2 = player2
 
     def play(self, verbatim: bool = False):
 
@@ -40,7 +59,8 @@ class Game:
         self.player_2.start()
 
         # and (start_time + TIME_OUT > curr_time):
-        while ((1+8 in self.cb.board) and (1+16 in self.cb.board)): #and (start_time + TIME_OUT > curr_time)):
+        # and (start_time + TIME_OUT > curr_time)):
+        while ((1+8 in self.cb.board) and (1+16 in self.cb.board)):
             curr_time = int(time.time())
             if verbatim:
                 print_board(self.cb.board, 8)
@@ -57,9 +77,9 @@ class Game:
         winner = 2 if 1+8 not in self.cb.board else 1
         self.winner = winner
 
-        white_x: list[Chessb] = []
+        white_x: list[list[int]] = []
         white_y: list[float] = []
-        black_x: list[Chessb] = []
+        black_x: list[list[int]] = []
         black_y: list[float] = []
 
         self.cb.board_states.reverse()
