@@ -14,7 +14,7 @@ tf.keras.utils.disable_interactive_logging()
 tf.get_logger().setLevel("WARNING")
 
 
-def get_player_pairs(pop_size: int, white_net: NeuralNetwork, black_net: NeuralNetwork):
+def get_player_pairs_init(pop_size: int, white_net: NeuralNetwork, black_net: NeuralNetwork):
     res: list[tuple[PlayerDef, PlayerDef]] = []
     for i in range(pop_size):
 
@@ -35,7 +35,40 @@ def get_player_pairs(pop_size: int, white_net: NeuralNetwork, black_net: NeuralN
     return res
 
 
+def get_player_pairs_train(pop_size: int, white_net: NeuralNetwork, black_net: NeuralNetwork):
+    res: list[tuple[PlayerDef, PlayerDef]] = []
+    for i in range(pop_size):
+
+        w_mod = tf.keras.models.clone_model(white_net.model)
+        w_mod.set_weights(white_net.model.get_weights())
+        w_net = NeuralNetwork(model=w_mod)
+
+        b_mod = tf.keras.models.clone_model(black_net.model)
+        b_mod.set_weights(black_net.model.get_weights())
+        b_net = NeuralNetwork(model=b_mod)
+
+        if i % 2 == 0:
+            res.append((PlayerDef("RL", RlPlayerConfig(1, w_net)),
+                        PlayerDef("RL", RlPlayerConfig(2, b_net))))
+        else:
+            res.append((PlayerDef("RL", RlPlayerConfig(1, w_net)),
+                        PlayerDef("RL", RlPlayerConfig(2, b_net))))
+    return res
+
+
+dataFrameTrain = {  "episode" : [],
+                    "duration" : [],
+                    "step_num" : [],
+                    "GamesWonByBlack" : 0,
+                    "GameWonByWhite"  : 0}
+
 def task(player_def_1: PlayerDef, player_def_2: PlayerDef):
+    g = Game(player_def_1, player_def_2)
+    return g.play()
+
+currentGameNum = 0
+
+def task_train(player_def_1: PlayerDef, player_def_2: PlayerDef):
     g = Game(player_def_1, player_def_2)
     return g.play()
 
@@ -53,11 +86,12 @@ if __name__ == "__main__":
         white_network.model = tf.keras.models.load_model(
             'model/white_model')  # type: ignore
 
-    for episode_num in range(config.max_episodes):
+    # Stockfish train episodes
+    for episode_num in range(3):
         print('[INFO]', f'Starting episode {episode_num}')
 
         results = []
-        pairs = get_player_pairs(config.pop_size,
+        pairs = get_player_pairs_init(config.pop_size,
                                  white_net=white_network,
                                  black_net=black_network)
 
@@ -66,6 +100,31 @@ if __name__ == "__main__":
         with Pool() as pool:
             results = pool.starmap(task, pairs)
             pool.close()
+
+        white_x, white_y, black_x, black_y = list(map(list, zip(*results)))
+        print('[INFO]', f'got all results in episode {episode_num}')
+
+        for (x, y) in zip(white_x, white_y):
+            white_network.update(x, y)
+
+        for (x, y) in zip(black_x, black_y):
+            black_network.update(x, y)
+
+    # RL Train Episodes
+    for episode_num in range(3):
+        print('[INFO]', f'Starting episode {episode_num}')
+
+        results = []
+        pairs = get_player_pairs_train(config.pop_size,
+                                 white_net=white_network,
+                                 black_net=black_network)
+
+        print('[MAIN]: get_pairs', pairs)
+
+        with Pool() as pool:
+            results = pool.starmap(task_train, pairs)
+            pool.close()
+
 
         white_x, white_y, black_x, black_y = list(map(list, zip(*results)))
         print('[INFO]', f'got all results in episode {episode_num}')

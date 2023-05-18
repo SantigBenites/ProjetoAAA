@@ -29,7 +29,8 @@ class PlayerDef:
 @define
 class RunConfig:
     cooldown: float
-    max_episodes: int
+    StockFish_episodes: int
+    train_episodes: int
     pop_size: int
     base_board: list[int]
     ga_genotype: dict[str, int]

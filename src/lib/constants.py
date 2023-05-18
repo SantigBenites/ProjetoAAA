@@ -27,11 +27,12 @@ _GA_GENOTYPE = {
 
 config = RunConfig(
     cooldown=0.1,
-    max_episodes=100,
-    pop_size=6,
+    StockFish_episodes=100,
+    train_episodes=100,
+    pop_size=2,
     base_board=_BOARD,
     ga_genotype=_GA_GENOTYPE,
-    time_out=100,
+    time_out=60,
     nn_win_reward=50,
     discount_factor=0.9,
     verbose=False

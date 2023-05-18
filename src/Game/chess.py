@@ -5,6 +5,7 @@ from lib.typedef import PlayerDef
 from lib.constants import config
 from Game.chessboard import Chessboard
 from Game.cli_display import print_board
+from lib.constants import config
 
 from GeneticAlgorythm.GAPlayer import GAPlayer
 from ReinforcementLearning.RLplayer import RLPlayer
@@ -15,8 +16,6 @@ player_map = {
     "GA": GAPlayer,
     "SF": StockFishPlayer
 }
-
-TIME_OUT = 100
 
 
 class Game:
@@ -38,7 +37,7 @@ class Game:
 
         # and (start_time + TIME_OUT > curr_time):
         # and (start_time + TIME_OUT > curr_time)):
-        while ((1+8 in self.cb.board) and (1+16 in self.cb.board) and (start_time + TIME_OUT > curr_time)):
+        while ((1+8 in self.cb.board) and (1+16 in self.cb.board) and (start_time + config.time_out > curr_time)):
             curr_time = int(time.time())
             if verbatim:
                 print_board(self.cb.board, 8)
@@ -50,7 +49,8 @@ class Game:
 
         self.player_1.join()
         self.player_2.join()
-        print_board(self.cb.board, 8)
+        #print_board(self.cb.board, 8)
+        self.duration = start_time - curr_time
 
         # print(f" player 1 fitness {self.player_1.fitness(self.cb.board)} player2 fitness {self.player_2.fitness(self.cb.board)}")
 
