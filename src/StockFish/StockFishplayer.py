@@ -29,7 +29,7 @@ class StockFishPlayer(threading.Thread):
         last_move = None
         while not self.stop.is_set():
             mv = self.choose_next_move()
-            time.sleep(0.2)
+            #time.sleep(0.2)
             last_move = mv
             if mv == None:
                 observation = self.cb.destroyEnemyKing(self.color)

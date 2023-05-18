@@ -92,7 +92,10 @@ class Chessboard():
 
         if current_time - self.timestamps[index] >= self.cooldown:
             pm = possible_moves(self.board, index)
-            return list(zip([index]*len(pm), pm))
+            if pm != None:
+                return list(zip([index]*len(pm), pm))
+            else:
+                return []
         return []
 
     def pieceOnCooldown(self, index: int) -> bool:

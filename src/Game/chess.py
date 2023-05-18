@@ -44,7 +44,7 @@ class Game:
             curr_time = int(time.time())
             if verbatim:
                 print_board(self.cb.board, 8)
-            #time.sleep(0.1)
+            time.sleep(0.1)
 
         self.stop_e.set()
         print_board(self.cb.board, 8)

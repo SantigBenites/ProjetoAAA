@@ -4,6 +4,7 @@ from Game.chessboard import Chessboard
 from Game.chess import Game
 from ReinforcementLearning.RLplayer import RLPlayer
 from StockFish.StockFishplayer import StockFishPlayer
+from GeneticAlgorythm.GAPlayer import GAPlayer
 from ReinforcementLearning.NeuralNetwork import NeuralNetwork
 import time
 import sys
@@ -25,6 +26,20 @@ board = [3+8, 5+8, 4+8, 2+8, 1+8, 4+8, 5+8, 3+8,
          ]
 cooldown = 0.1
 
+genotype = {
+    'PAWN_VALUE': 3380 , 
+    'KNIGHT_VALUE': 3349 , 
+    'BISHOP_VALUE': 116 , 
+    'ROOK_VALUE': 2704 , 
+    'QUEEN_VALUE': 3350 , 
+    'KING_CAPTURE': 2854 , 
+    'INFRONT_VALUE': 3149 , 
+    'KING_LOSS': 3988 , 
+    'KING_ATACK': 789 , 
+    'QUEEN_ATACK': 501 , 
+    'CAPTURE_VALUE': 1616 , 
+    'EDGE_VALUE': 1051 }
+
 # End event
 stop_e = td.Event()
 
@@ -37,7 +52,7 @@ white_network = NeuralNetwork()
 if os.path.isdir("model/white_model"):
     white_network.model = tf.keras.models.load_model('model/white_model') # type: ignore
 
-MAX_EPISODES = 1
+MAX_EPISODES = 100
 
 for episode_num in range(MAX_EPISODES):
 
@@ -47,7 +62,7 @@ for episode_num in range(MAX_EPISODES):
 
     # Players
     p1 = RLPlayer(cb, 1, stop_e, black_network)
-    p2 = StockFishPlayer(cb, 2, stop_e)
+    p2 = StockFishPlayer(cb, 2, stop_e, )
 
     # Game
     chess = Game(p1, p2, cb, stop_e)
@@ -56,8 +71,6 @@ for episode_num in range(MAX_EPISODES):
 
     print(f"Game number {episode_num} was won by player {chess.winner}")
     stop_e.clear()
-    p1.join()
-    p2.join()
 
     white_network.update(white_x, white_y)
     black_network.update(black_x, black_y)
