@@ -19,13 +19,6 @@ class GAPlayer(threading.Thread):
         self.color = config.color
         self.genotype = config.genotype
 
-    # def __init__(self, c_board: Chessboard, color: int, stop: threading.Event, genotype: dict[str, int]) -> None:
-    #    threading.Thread.__init__(self, daemon=True)
-    #    self.cb = c_board
-    #    self.stop = stop
-    #    self.color = color
-    #    self.genotype = genotype
-
     def run(self) -> None:
 
         while not self.stop.is_set():

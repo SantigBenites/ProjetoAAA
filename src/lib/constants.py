@@ -27,7 +27,7 @@ _GA_GENOTYPE = {
 
 config = RunConfig(
     cooldown=0.1,
-    max_episodes=1,
+    max_episodes=100,
     base_board=_BOARD,
     ga_genotype=_GA_GENOTYPE
 )

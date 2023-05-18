@@ -1,14 +1,12 @@
 import os
-import time
-import sys
 import tensorflow as tf
 import threading as td
 import multiprocessing as mp
 
-from lib.typedef import PlayerDef, RlPlayerConfig, GAPlayerConfig, SFPlayerConfig
 from Game.chess import Game
 from Game.chessboard import Chessboard
 from ReinforcementLearning.NeuralNetwork import NeuralNetwork
+from lib.typedef import PlayerDef, RlPlayerConfig, GAPlayerConfig, SFPlayerConfig
 
 # move all constants to this file
 from lib.constants import config

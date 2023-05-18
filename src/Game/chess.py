@@ -21,34 +21,11 @@ player_map = {
 
 
 class Game:
-    def __init__(self,
-                 player1: PlayerDef,
-                 player2: PlayerDef,
-                 board: Chessboard,
-                 stop: td.Event):
-
+    def __init__(self, player1: PlayerDef, player2: PlayerDef, board: Chessboard, stop: td.Event):
         self.player_1 = player_map[player1.type](player1.config)
         self.player_2 = player_map[player2.type](player2.config)
         self.cb = board
         self.stop_e = stop
-
-        pass
-
-    # def __init__(self, player1, player2, board: Chessboard, stop: td.Event):
-    #
-    #    # Board / environment
-    #    self.originalBoard = deepcopy(board)
-    #
-    #    # Board
-    #    self.cb = board
-    #
-    #    # Events for threads
-    #    self.stop_e = stop
-    #
-    #    # Playing as RL
-    #    self.player_1 = player1
-    #    # Playing as StockFish
-    #    self.player_2 = player2
 
     def play(self, verbatim: bool = False):
 

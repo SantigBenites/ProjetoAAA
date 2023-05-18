@@ -3,10 +3,6 @@ import random
 import time
 
 from lib.typedef import RlPlayerConfig
-from Game.pieces import pieces_table
-from Game.chessboard import Chessboard
-from Game.cli_display import board_string
-from ReinforcementLearning.NeuralNetwork import NeuralNetwork
 
 
 class RLPlayer(threading.Thread):
@@ -41,7 +37,6 @@ class RLPlayer(threading.Thread):
 
     def choose_next_move(self) -> None | tuple[int, int]:
 
-        # TODO play function
         current_moves = self.cb.legal_moves(self.color)
 
         rand = random.Random()
