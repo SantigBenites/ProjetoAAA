@@ -3,7 +3,7 @@ import string
 import threading
 import chess.engine
 
-
+from Game.chessboard import Chessboard
 from lib.typedef import SFPlayerConfig
 
 timeScale = 2.0
@@ -13,9 +13,9 @@ ENGINEPATH = os.getcwd() + "/assets/stockfish-ubuntu-20.04-x86-64"
 
 class StockFishPlayer(threading.Thread):
 
-    def __init__(self, config: SFPlayerConfig, stop: threading.Event) -> None:
+    def __init__(self, config: SFPlayerConfig, c_board: Chessboard, stop: threading.Event) -> None:
         threading.Thread.__init__(self, daemon=True)
-        self.cb = config.c_board
+        self.cb = c_board
         self.color = config.color
         self.engine = chess.engine.SimpleEngine.popen_uci(ENGINEPATH)
         self.stop = stop

@@ -1,7 +1,6 @@
 import os
 import tensorflow as tf
 import threading as td
-import multiprocessing as mp
 
 from Game.chess import Game
 from Game.chessboard import Chessboard
@@ -37,11 +36,11 @@ for episode_num in range(config.max_episodes):
     cb = Chessboard(config.base_board.copy(), config.cooldown)
 
     # Players
-    p1_def = PlayerDef("RL", RlPlayerConfig(cb, 1, white_network))
-    p2_def = PlayerDef("SF", SFPlayerConfig(cb, 2))
+    p1_def = PlayerDef("RL", RlPlayerConfig(1, white_network))
+    p2_def = PlayerDef("SF", SFPlayerConfig(2))
 
     # Game
-    chess = Game(p1_def, p2_def, cb)
+    chess = Game(p1_def, p2_def)
 
     white_x, white_y, black_x, black_y = chess.play(verbatim=False)
 

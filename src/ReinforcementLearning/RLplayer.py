@@ -3,13 +3,14 @@ import random
 import time
 
 from lib.typedef import RlPlayerConfig
+from Game.chessboard import Chessboard
 
 
 class RLPlayer(threading.Thread):
 
-    def __init__(self, config: RlPlayerConfig, stop: threading.Event) -> None:
+    def __init__(self, config: RlPlayerConfig, c_board: Chessboard, stop: threading.Event) -> None:
         threading.Thread.__init__(self, daemon=True)
-        self.cb = config.c_board
+        self.cb = c_board
         self.color = config.color
         self.NN = config.NN
         self.stop = stop

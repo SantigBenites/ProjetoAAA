@@ -11,23 +11,28 @@ logging.getLogger('tensorflow').setLevel(logging.FATAL)
 
 class NeuralNetwork():
 
-    def __init__(self) -> None:
+    def __init__(self, model=None) -> None:
 
         # Create a Sequential model and add a Dense layer as the first layer.
-        model = keras.models.Sequential()
-        model.add(keras.layers.InputLayer(input_shape=(64)))
-        model.add(keras.layers.Dense(64, activation='relu'))
-        model.add(keras.layers.Dense(32, activation='relu'))
-        model.add(keras.layers.Dense(1, activation='relu'))
 
-        model.compile(optimizer='adam',
-                      loss=tf.losses.CategoricalCrossentropy(from_logits=True),
-                      metrics=['accuracy'])
+        if model == None:
+            model = keras.models.Sequential()
+            model.add(keras.layers.InputLayer(input_shape=(64)))
+            model.add(keras.layers.Dense(64, activation='relu'))
+            model.add(keras.layers.Dense(32, activation='relu'))
+            model.add(keras.layers.Dense(1, activation='relu'))
 
-        # print(model.summary())
-        # print('[INPUT_SHAPE]', model.input_shape)
+            model.compile(optimizer='adam',
+                          loss=tf.losses.CategoricalCrossentropy(
+                              from_logits=True),
+                          metrics=['accuracy'])
 
-        self.model = model
+            # print(model.summary())
+            # print('[INPUT_SHAPE]', model.input_shape)
+
+            self.model = model
+        else:
+            self.model = model
 
     def update(self, x: list[list[int]], y: list[float]):
         """This method given a certain board history and a winner updates the NN

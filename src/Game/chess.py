@@ -18,11 +18,13 @@ player_map = {
 
 
 class Game:
-    def __init__(self, player1: PlayerDef, player2: PlayerDef, board: Chessboard):
+    def __init__(self, player1: PlayerDef, player2: PlayerDef):
         self.stop_e = td.Event()
-        self.player_1 = player_map[player1.type](player1.config, self.stop_e)
-        self.player_2 = player_map[player2.type](player2.config, self.stop_e)
-        self.cb = board
+        self.cb = Chessboard(config.base_board.copy(), config.cooldown)
+        self.player_1 = player_map[player1.type](
+            player1.config, self.cb, self.stop_e)
+        self.player_2 = player_map[player2.type](
+            player2.config, self.cb, self.stop_e)
 
     def play(self, verbatim: bool = False):
 
@@ -41,7 +43,9 @@ class Game:
             time.sleep(0.1)
 
         self.stop_e.set()
-        print_board(self.cb.board, 8)
+        # print_board(self.cb.board, 8)
+
+        # print('[GAME]', f'Before Joining threads', flush=True)
 
         self.player_1.join()
         self.player_2.join()
@@ -68,6 +72,8 @@ class Game:
                 black_x.append(board)
                 black_y.append(r)
             reward *= config.discount_factor
+
+        # print('[GAME]', f'game ended with winner {winner}', flush=True)
 
         return white_x, white_y, black_x, black_y
 

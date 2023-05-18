@@ -3,8 +3,8 @@ import random
 import threading
 
 
-from lib.typedef import GAPlayerConfig
 from Game.pieces import pieces_table
+from lib.typedef import GAPlayerConfig
 from Game.chessboard import Chessboard
 from Game.cli_display import board_string
 from Game.moveGeneration import possible_moves, square_to_edge
@@ -12,9 +12,9 @@ from Game.moveGeneration import possible_moves, square_to_edge
 
 class GAPlayer(threading.Thread):
 
-    def __init__(self, config: GAPlayerConfig, stop: threading.Event) -> None:
+    def __init__(self, config: GAPlayerConfig, c_board: Chessboard, stop: threading.Event) -> None:
         threading.Thread.__init__(self, daemon=True)
-        self.cb = config.c_board
+        self.cb = c_board
         self.color = config.color
         self.genotype = config.genotype
         self.stop = stop
