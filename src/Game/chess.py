@@ -50,7 +50,7 @@ class Game:
         self.player_1.join()
         self.player_2.join()
         # print_board(self.cb.board, 8)
-        self.duration = start_time - curr_time
+        self.duration = curr_time - start_time
 
         # print(f" player 1 fitness {self.player_1.fitness(self.cb.board)} player2 fitness {self.player_2.fitness(self.cb.board)}")
 
