@@ -93,38 +93,38 @@ if __name__ == "__main__":
             'model/white_model')  # type: ignore
 
     # Stockfish train episodes
-    for episode_num in range(3):
-        print('[INFO]', f'Starting episode {episode_num}')
-
-        results = []
-        pairs = get_player_pairs_init(config.pop_size,
-                                      white_net=white_network,
-                                      black_net=black_network)
-
-        print('[MAIN]: get_pairs', pairs)
-
-        with Pool() as pool:
-            results = pool.starmap(task, pairs)
-            pool.close()
-
-        white_x: list[list[int]] = []
-        white_y: list[float] = []
-        black_x: list[list[int]] = []
-        black_y: list[float] = []
-        for res in results:
-            white_x.extend(res.white_x)
-            white_y.extend(res.white_y)
-            black_x.extend(res.black_x)
-            black_y.extend(res.black_y)
-
-        for (x, y) in zip(white_x, white_y):
-            white_network.update(x, y)
-
-        for (x, y) in zip(black_x, black_y):
-            black_network.update(x, y)
+    # for episode_num in range(3):
+    #    print('[INFO]', f'Starting episode {episode_num}')
+    #
+    #    results = []
+    #    pairs = get_player_pairs_init(config.pop_size,
+    #                                  white_net=white_network,
+    #                                  black_net=black_network)
+    #
+    #    print('[MAIN]: get_pairs', pairs)
+    #
+    #    with Pool() as pool:
+    #        results = pool.starmap(task, pairs)
+    #        pool.close()
+    #
+    #    white_x: list[list[int]] = []
+    #    white_y: list[float] = []
+    #    black_x: list[list[int]] = []
+    #    black_y: list[float] = []
+    #    for res in results:
+    #        white_x.extend(res.white_x)
+    #        white_y.extend(res.white_y)
+    #        black_x.extend(res.black_x)
+    #        black_y.extend(res.black_y)
+    #
+    #    for (x, y) in zip(white_x, white_y):
+    #        white_network.update(x, y)
+    #
+    #    for (x, y) in zip(black_x, black_y):
+    #        black_network.update(x, y)
 
     # RL Train Episodes
-    for episode_num in range(3):
+    for episode_num in range(200):
         print('[INFO]', f'Starting episode {episode_num}')
 
         results = []
@@ -161,6 +161,8 @@ if __name__ == "__main__":
         white_network.update(white_x, white_y)
 
         black_network.update(black_x, black_y)
+        white_network.model.save('model/white_model')
+        black_network.model.save('model/black_model')
 
     white_network.model.save('model/white_model')
     black_network.model.save('model/black_model')
