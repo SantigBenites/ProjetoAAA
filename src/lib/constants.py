@@ -26,8 +26,8 @@ _GA_GENOTYPE = {
 }
 
 config = RunConfig(
+    random_chance=0.3,
     cooldown=0.1,
-    StockFish_episodes=100,
     train_episodes=100,
     pop_size=16,
     base_board=_BOARD,
@@ -35,5 +35,6 @@ config = RunConfig(
     time_out=60,
     nn_win_reward=50,
     discount_factor=0.9,
-    verbose=False
+    verbose=False,
+    play_against_stockfish_prob=0.1,
 )

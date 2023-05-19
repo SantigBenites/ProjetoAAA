@@ -39,8 +39,8 @@ class GameReturn:
 
 @define
 class RunConfig:
+    random_chance: float
     cooldown: float
-    StockFish_episodes: int
     train_episodes: int
     pop_size: int
     base_board: list[int]
@@ -49,3 +49,4 @@ class RunConfig:
     nn_win_reward: int
     discount_factor: float
     verbose: bool
+    play_against_stockfish_prob: float

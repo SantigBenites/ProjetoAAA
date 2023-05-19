@@ -52,9 +52,23 @@ class Game:
         # print_board(self.cb.board, 8)
         self.duration = curr_time - start_time
 
-        # print(f" player 1 fitness {self.player_1.fitness(self.cb.board)} player2 fitness {self.player_2.fitness(self.cb.board)}")
+        white_x: list[list[int]] = []
+        white_y: list[float] = []
+        black_x: list[list[int]] = []
+        black_y: list[float] = []
+
+        if self.duration >= config.time_out:
+            for board, player in self.cb.board_states:
+                r = 0
+                if player == 1:
+                    white_x.append(board)
+                    white_y.append(r)
+                else:
+                    black_x.append(board)
+                    black_y.append(r)
 
         winner = 2 if 1+8 not in self.cb.board else 1
+
         self.winner = winner
 
         white_x: list[list[int]] = []

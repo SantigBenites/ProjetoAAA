@@ -3,10 +3,9 @@ from multiprocessing import set_start_method
 import os
 import json
 import operator
+import random
 import tensorflow as tf
 
-
-from functools import reduce
 from Game.chess import Game
 from multiprocessing import Pool
 from lib.constants import config
@@ -72,11 +71,6 @@ def task(player_def_1: PlayerDef, player_def_2: PlayerDef):
     return g.play()
 
 
-def task_train(player_def_1: PlayerDef, player_def_2: PlayerDef):
-    g = Game(player_def_1, player_def_2)
-    return g.play()
-
-
 if __name__ == "__main__":
     set_start_method("spawn")  # * talk about this in the report
     # Neural Networks
@@ -90,81 +84,77 @@ if __name__ == "__main__":
         white_network.model = tf.keras.models.load_model(
             'model/white_model')  # type: ignore
 
-    # Stockfish train episodes
-    # for episode_num in range(3):
-    #    print('[INFO]', f'Starting episode {episode_num}')
-    #
-    #    results = []
-    #    pairs = get_player_pairs_init(config.pop_size,
-    #                                  white_net=white_network,
-    #                                  black_net=black_network)
-    #
-    #    print('[MAIN]: get_pairs', pairs)
-    #
-    #    with Pool() as pool:
-    #        results = pool.starmap(task, pairs)
-    #        pool.close()
-    #
-    #    white_x: list[list[int]] = []
-    #    white_y: list[float] = []
-    #    black_x: list[list[int]] = []
-    #    black_y: list[float] = []
-    #    for res in results:
-    #        white_x.extend(res.white_x)
-    #        white_y.extend(res.white_y)
-    #        black_x.extend(res.black_x)
-    #        black_y.extend(res.black_y)
-    #
-    #    for (x, y) in zip(white_x, white_y):
-    #        white_network.update(x, y)
-    #
-    #    for (x, y) in zip(black_x, black_y):
-    #        black_network.update(x, y)
-
-    # RL Train Episodes
-    for episode_num in range(500):
+    for episode_num in range(config.train_episodes):
         print('[INFO]', f'Starting episode {episode_num}')
+        playing_against = random.uniform(0, 1)
+        if playing_against < config.play_against_stockfish_prob:
 
-        results = []
-        pairs = get_player_pairs_train(config.pop_size,
-                                       white_net=white_network,
-                                       black_net=black_network)
+            # StockFish Train Episodes
+            results = []
+            pairs = get_player_pairs_init(config.pop_size,
+                                          white_net=white_network,
+                                          black_net=black_network)
 
-        # print('[MAIN]: get_pairs', pairs)
+            print('[MAIN]: get_pairs', pairs)
 
-        with Pool() as pool:
-            results = pool.starmap(task, pairs)
-            pool.close()
+            with Pool() as pool:
+                results = pool.starmap(task, pairs)
+                pool.close()
 
-        white_x: list[list[int]] = []
-        white_y: list[float] = []
-        black_x: list[list[int]] = []
-        black_y: list[float] = []
-        for res in results:
-            white_x.extend(res.white_x)
-            white_y.extend(res.white_y)
-            black_x.extend(res.black_x)
-            black_y.extend(res.black_y)
+            white_x: list[list[int]] = []
+            white_y: list[float] = []
+            black_x: list[list[int]] = []
+            black_y: list[float] = []
+            for res in results:
+                white_x.extend(res.white_x)
+                white_y.extend(res.white_y)
+                black_x.extend(res.black_x)
+                black_y.extend(res.black_y)
 
-            dataFrameTrain["episode"].append(episode_num)
-            dataFrameTrain["duration"].append(res.duration)
-            dataFrameTrain["step_num"].append(res.moves_num)
-            if res.winner == 1:
-                dataFrameTrain["GameWonByWhite"] += 1
-            else:
-                dataFrameTrain["GamesWonByBlack"] += 1
+        else:
+            # RL Train Episodes
+            results = []
+            pairs = get_player_pairs_train(config.pop_size,
+                                           white_net=white_network,
+                                           black_net=black_network)
 
-            print('[INFO]', f'got all results in episode {episode_num}')
+            with Pool() as pool:
+                results = pool.starmap(task, pairs)
+                pool.close()
 
-        white_network.update(white_x, white_y)
+            white_x: list[list[int]] = []
+            white_y: list[float] = []
+            black_x: list[list[int]] = []
+            black_y: list[float] = []
+            for res in results:
+                white_x.extend(res.white_x)
+                white_y.extend(res.white_y)
+                black_x.extend(res.black_x)
+                black_y.extend(res.black_y)
 
-        black_network.update(black_x, black_y)
+                dataFrameTrain["episode"].append(episode_num)
+                dataFrameTrain["duration"].append(res.duration)
+                dataFrameTrain["step_num"].append(res.moves_num)
+                if res.winner == 1:
+                    dataFrameTrain["GameWonByWhite"] += 1
+                else:
+                    dataFrameTrain["GamesWonByBlack"] += 1
+
+        print('[INFO]', f'got all results in episode {episode_num}')
+
+        for (x, y) in zip(white_x, white_y):
+            white_network.update(x, y)
+
+        for (x, y) in zip(black_x, black_y):
+            black_network.update(x, y)
 
         white_network.model.save('model/white_model')
         black_network.model.save('model/black_model')
+
         with open('assets/data.txt', 'w') as convert_file:
             convert_file.write(json.dumps(dataFrameTrain))
 
+    # to not lose progress in case of crash we store everything
     with open('assets/data.txt', 'w') as convert_file:
         convert_file.write(json.dumps(dataFrameTrain))
 
