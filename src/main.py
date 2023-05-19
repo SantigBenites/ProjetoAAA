@@ -107,8 +107,15 @@ if __name__ == "__main__":
             results = pool.starmap(task, pairs)
             pool.close()
 
-        white_x, white_y, black_x, black_y = list(map(list, zip(*results)))
-        print('[INFO]', f'got all results in episode {episode_num}')
+        white_x: list[list[int]] = []
+        white_y: list[float] = []
+        black_x: list[list[int]] = []
+        black_y: list[float] = []
+        for res in results:
+            white_x.extend(res.white_x)
+            white_y.extend(res.white_y)
+            black_x.extend(res.black_x)
+            black_y.extend(res.black_y)
 
         for (x, y) in zip(white_x, white_y):
             white_network.update(x, y)
