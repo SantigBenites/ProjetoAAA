@@ -1,6 +1,7 @@
 from multiprocessing import set_start_method
 
 import os
+import json
 import operator
 import tensorflow as tf
 
@@ -121,7 +122,7 @@ if __name__ == "__main__":
     #        black_network.update(x, y)
 
     # RL Train Episodes
-    for episode_num in range(200):
+    for episode_num in range(500):
         print('[INFO]', f'Starting episode {episode_num}')
 
         results = []
@@ -158,10 +159,12 @@ if __name__ == "__main__":
         white_network.update(white_x, white_y)
 
         black_network.update(black_x, black_y)
+
         white_network.model.save('model/white_model')
         black_network.model.save('model/black_model')
+        with open('assets/data.txt', 'w') as convert_file:
+            convert_file.write(json.dumps(dataFrameTrain))
 
-    import json
     with open('assets/data.txt', 'w') as convert_file:
         convert_file.write(json.dumps(dataFrameTrain))
 
