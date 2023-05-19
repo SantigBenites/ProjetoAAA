@@ -142,11 +142,9 @@ if __name__ == "__main__":
 
         print('[INFO]', f'got all results in episode {episode_num}')
 
-        for (x, y) in zip(white_x, white_y):
-            white_network.update(x, y)
+        white_network.update(white_x, white_y)
 
-        for (x, y) in zip(black_x, black_y):
-            black_network.update(x, y)
+        black_network.update(black_x, black_y)
 
         white_network.model.save('model/white_model')
         black_network.model.save('model/black_model')
