@@ -34,7 +34,7 @@ class NeuralNetwork():
         else:
             self.model = model
 
-    def update(self, x: list[list[int]], y: list[float]):
+    def update(self, x: list[int], y: float):
         """This method given a certain board history and a winner updates the NN
 
         Args:
@@ -43,7 +43,7 @@ class NeuralNetwork():
         """
 
         if x == [] or y == []:
-            return 
+            return
 
         self.model.fit(x, y, verbose=0)
 
