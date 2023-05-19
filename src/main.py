@@ -71,9 +71,6 @@ def task(player_def_1: PlayerDef, player_def_2: PlayerDef):
     return g.play()
 
 
-currentGameNum = 0
-
-
 def task_train(player_def_1: PlayerDef, player_def_2: PlayerDef):
     g = Game(player_def_1, player_def_2)
     return g.play()
@@ -132,10 +129,10 @@ if __name__ == "__main__":
                                        white_net=white_network,
                                        black_net=black_network)
 
-        print('[MAIN]: get_pairs', pairs)
+        # print('[MAIN]: get_pairs', pairs)
 
         with Pool() as pool:
-            results = pool.starmap(task_train, pairs)
+            results = pool.starmap(task, pairs)
             pool.close()
 
         white_x: list[list[int]] = []
@@ -156,13 +153,17 @@ if __name__ == "__main__":
             else:
                 dataFrameTrain["GamesWonByBlack"] += 1
 
-        print('[INFO]', f'got all results in episode {episode_num}')
+            print('[INFO]', f'got all results in episode {episode_num}')
 
         white_network.update(white_x, white_y)
 
         black_network.update(black_x, black_y)
         white_network.model.save('model/white_model')
         black_network.model.save('model/black_model')
+
+    import json
+    with open('assets/data.txt', 'w') as convert_file:
+        convert_file.write(json.dumps(dataFrameTrain))
 
     white_network.model.save('model/white_model')
     black_network.model.save('model/black_model')
