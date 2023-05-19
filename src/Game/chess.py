@@ -67,6 +67,14 @@ class Game:
                     black_x.append(board)
                     black_y.append(r)
 
+            return GameReturn(white_x,
+                              white_y,
+                              black_x,
+                              black_y,
+                              self.duration,
+                              len(self.cb.board_states),
+                              1)
+
         winner = 2 if 1+8 not in self.cb.board else 1
 
         self.winner = winner
