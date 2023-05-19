@@ -27,6 +27,17 @@ class PlayerDef:
 
 
 @define
+class GameReturn:
+    white_x: list[list[int]]
+    white_y: list[float]
+    black_x: list[list[int]]
+    black_y: list[float]
+    duration: float
+    moves_num: int
+    winner: int
+
+
+@define
 class RunConfig:
     cooldown: float
     StockFish_episodes: int

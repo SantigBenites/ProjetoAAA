@@ -1,8 +1,11 @@
 from multiprocessing import set_start_method
 
 import os
+import operator
 import tensorflow as tf
 
+
+from functools import reduce
 from Game.chess import Game
 from multiprocessing import Pool
 from lib.constants import config
@@ -56,17 +59,20 @@ def get_player_pairs_train(pop_size: int, white_net: NeuralNetwork, black_net: N
     return res
 
 
-dataFrameTrain = {  "episode" : [],
-                    "duration" : [],
-                    "step_num" : [],
-                    "GamesWonByBlack" : 0,
-                    "GameWonByWhite"  : 0}
+dataFrameTrain = {"episode": [],
+                  "duration": [],
+                  "step_num": [],
+                  "GamesWonByBlack": 0,
+                  "GameWonByWhite": 0}
+
 
 def task(player_def_1: PlayerDef, player_def_2: PlayerDef):
     g = Game(player_def_1, player_def_2)
     return g.play()
 
+
 currentGameNum = 0
+
 
 def task_train(player_def_1: PlayerDef, player_def_2: PlayerDef):
     g = Game(player_def_1, player_def_2)
@@ -92,8 +98,8 @@ if __name__ == "__main__":
 
         results = []
         pairs = get_player_pairs_init(config.pop_size,
-                                 white_net=white_network,
-                                 black_net=black_network)
+                                      white_net=white_network,
+                                      black_net=black_network)
 
         print('[MAIN]: get_pairs', pairs)
 
@@ -116,8 +122,8 @@ if __name__ == "__main__":
 
         results = []
         pairs = get_player_pairs_train(config.pop_size,
-                                 white_net=white_network,
-                                 black_net=black_network)
+                                       white_net=white_network,
+                                       black_net=black_network)
 
         print('[MAIN]: get_pairs', pairs)
 
@@ -125,8 +131,24 @@ if __name__ == "__main__":
             results = pool.starmap(task_train, pairs)
             pool.close()
 
+        white_x: list[list[int]] = []
+        white_y: list[float] = []
+        black_x: list[list[int]] = []
+        black_y: list[float] = []
+        for res in results:
+            white_x.extend(res.white_x)
+            white_y.extend(res.white_y)
+            black_x.extend(res.black_x)
+            black_y.extend(res.black_y)
 
-        white_x, white_y, black_x, black_y = list(map(list, zip(*results)))
+            dataFrameTrain["episode"].append(episode_num)
+            dataFrameTrain["duration"].append(res.duration)
+            dataFrameTrain["step_num"].append(res.moves_num)
+            if res.winner == 1:
+                dataFrameTrain["GameWonByWhite"] += 1
+            else:
+                dataFrameTrain["GamesWonByBlack"] += 1
+
         print('[INFO]', f'got all results in episode {episode_num}')
 
         for (x, y) in zip(white_x, white_y):

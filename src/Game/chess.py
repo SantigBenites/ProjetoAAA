@@ -1,7 +1,7 @@
 import time
 import threading as td
 
-from lib.typedef import PlayerDef
+from lib.typedef import PlayerDef, GameReturn
 from lib.constants import config
 from Game.chessboard import Chessboard
 from Game.cli_display import print_board
@@ -31,7 +31,7 @@ class Game:
 
         self.player_1.start()
         self.player_2.start()
-        
+
         start_time = int(time.time())
         curr_time = int(time.time())
 
@@ -49,7 +49,7 @@ class Game:
 
         self.player_1.join()
         self.player_2.join()
-        #print_board(self.cb.board, 8)
+        # print_board(self.cb.board, 8)
         self.duration = start_time - curr_time
 
         # print(f" player 1 fitness {self.player_1.fitness(self.cb.board)} player2 fitness {self.player_2.fitness(self.cb.board)}")
@@ -77,7 +77,13 @@ class Game:
 
         print('[GAME]', f'game ended with winner {winner}', flush=True)
 
-        return white_x, white_y, black_x, black_y
+        return GameReturn(white_x,
+                          white_y,
+                          black_x,
+                          black_y,
+                          self.duration,
+                          len(self.cb.board_states),
+                          winner)
 
     def win_condition(self):
         # temporary
