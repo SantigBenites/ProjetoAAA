@@ -10,8 +10,8 @@ from lib.typedef import SFPlayerConfig
 
 timeScale = 2.0
 
-ENGINEPATH = os.getcwd() + "/assets/stockfish-ubuntu-20.04-x86-64"
 
+ENGINEPATH = os.getcwd() + "/assets/stockfish-ubuntu-20.04-x86-64"
 
 class StockFishPlayer(threading.Thread):
 

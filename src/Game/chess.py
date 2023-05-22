@@ -75,7 +75,12 @@ class Game:
                               len(self.cb.board_states),
                               1)
 
-        winner = 2 if 1+8 not in self.cb.board else 1
+        if 1+8 not in self.cb.board: 
+            winner = 2 
+        elif 1+16 not in self.cb.board:
+            winner = 1
+        else:
+            winner = 0
 
         self.winner = winner
 
