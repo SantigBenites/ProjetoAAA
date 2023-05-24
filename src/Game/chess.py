@@ -49,7 +49,7 @@ class Game:
 
         self.player_1.join()
         self.player_2.join()
-        # print_board(self.cb.board, 8)
+        print_board(self.cb.board, 8)
         self.duration = curr_time - start_time
 
         white_x: list[list[int]] = []

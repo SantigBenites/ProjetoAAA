@@ -24,7 +24,7 @@ class GAPlayer(threading.Thread):
         while not self.stop.is_set():
 
             mv = self.choose_next_move()
-
+            time.sleep(0.2)
             if mv != None:
 
                 self.cb.step(mv, self.color)
